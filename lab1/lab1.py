@@ -117,8 +117,8 @@ def getRawData():
 
     # Display Information About Dataset
     print("Shape of xTrain dataset: %s." % str(xTrain.shape))
-    print("Shape of yTrain dataset: %s." % str(yTrain.shape))
     print("Shape of xTest dataset: %s." % str(xTest.shape))
+    print("Shape of yTrain dataset: %s." % str(yTrain.shape))
     print("Shape of yTest dataset: %s." % str(yTest.shape))
 
     # Return Data
@@ -126,24 +126,19 @@ def getRawData():
 
 def preprocessData(raw):
     # Unpack Data From Raw Input
-    ((xTrain, yTrain), (xTest, yTest)) = raw            #TODO: Add range reduction here (0-255 ==> 0.0-1.0).
+    ((xTrain, yTrain), (xTest, yTest)) = raw
 
     # Normalize Input Data To Range
     xTrainP = np.divide(xTrain, 255)
     xTestP = np.divide(xTest, 255)
-
-    print(xTrainP)
-
-    import sys
-    sys.exit()
 
     # Process Integer Arrays Into Binary Class Matrices
     yTrainP = keras.utils.to_categorical(yTrain, NUM_CLASSES)
     yTestP = keras.utils.to_categorical(yTest, NUM_CLASSES)
 
     # Display Information About Dataset
-    print("New shape of xTrain dataset: %s." % str(xTrain.shape))
-    print("New shape of xTest dataset: %s." % str(xTest.shape))
+    print("New shape of xTrain dataset: %s." % str(xTrainP.shape))
+    print("New shape of xTest dataset: %s." % str(xTestP.shape))
     print("New shape of yTrain dataset: %s." % str(yTrainP.shape))
     print("New shape of yTest dataset: %s." % str(yTestP.shape))
 
