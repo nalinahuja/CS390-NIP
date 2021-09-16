@@ -128,11 +128,16 @@ def preprocessData(raw):
     # Unpack Data From Raw Input
     ((xTrain, yTrain), (xTest, yTest)) = raw            #TODO: Add range reduction here (0-255 ==> 0.0-1.0).
 
-    print(raw)
+    # Normalize Input Data To Range
+    xTrainP = np.divide(xTrain, 255)
+    xTestP = np.divide(xTest, 255)
+
+    print(xTrainP)
+
     import sys
     sys.exit()
 
-    # Convert Integers Into Binary Class Matrices
+    # Process Integer Arrays Into Binary Class Matrices
     yTrainP = keras.utils.to_categorical(yTrain, NUM_CLASSES)
     yTestP = keras.utils.to_categorical(yTest, NUM_CLASSES)
 
@@ -154,11 +159,11 @@ def trainModel(data):
         return (None)
     elif (ALGORITHM == "custom_net"):
         print("Building and training custom neural network")
-        print("Not yet implemented.")                   #TODO: Write code to build and train your custon neural net.
+        print("Not yet implemented.")                                   #TODO: Write code to build and train your custon neural net.
         return (None)
     elif (ALGORITHM == "tf_net"):
         print("Building and training TF_NN.")
-        print("Not yet implemented.")                   #TODO: Write code to build and train your keras neural net.
+        print("Not yet implemented.")                                   #TODO: Write code to build and train your keras neural net.
         return None
     else:
         raise ValueError("Algorithm not recognized.")
@@ -168,24 +173,35 @@ def runModel(data, model):
         return guesserClassifier(data)
     elif (ALGORITHM == "custom_net"):
         print("Testing Custom_NN.")
-        print("Not yet implemented.")                   #TODO: Write code to run your custon neural net.
+        print("Not yet implemented.")                                   #TODO: Write code to run your custon neural net.
         return (None)
     elif (ALGORITHM == "tf_net"):
         print("Testing TF_NN.")
-        print("Not yet implemented.")                   #TODO: Write code to run your keras neural net.
+        print("Not yet implemented.")                                   #TODO: Write code to run your keras neural net.
         return (None)
     else:
         raise ValueError("Algorithm not recognized.")
 
 def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
+    # Unpack Data
     xTest, yTest = data
+
+    # Initialize Accuracy
     acc = 0
+
+    # Iterate Over Predicted Values
     for i in range(preds.shape[0]):
-        if np.array_equal(preds[i], yTest[i]):   acc = acc + 1
-    accuracy = acc / preds.shape[0]
+        # Verify Predicted Values Match Expected Values
+        if (np.array_equal(preds[i], yTest[i])):
+            # Increment Accuracy Metric
+            acc += 1
+
+    # Calculate Accuracy
+    acc /= preds.shape[0]
+
+    # Display Classifier Metrics
     print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (accuracy * 100))
-    print()
 
 # End Pipeline Functions-----------------------------------------------------------------------------------------------------------------------------------------------
 
