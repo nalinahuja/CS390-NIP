@@ -53,7 +53,7 @@ class NeuralNetwork_2Layer():
             self.__activation_prime = self.__sigmoid_derivative
         else:
             # Throw Error Due To Invalid Activation Function
-            raise ValueError("Activation function not recognized...")
+            raise ValueError("activation function not recognized")
 
         # Initialize Weights Randomly
         self.W1 = np.random.randn(self.input_size, self.neurons_per_layer)
@@ -121,10 +121,11 @@ def get_raw_data():
     (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
 
     # Display Information About Dataset
-    print("Shape of xTrain dataset: %s." % str(xTrain.shape))
-    print("Shape of xTest dataset: %s." % str(xTest.shape))
-    print("Shape of yTrain dataset: %s." % str(yTrain.shape))
-    print("Shape of yTest dataset: %s." % str(yTest.shape))
+    print("Shape of xTrain dataset: %s" % str(xTrain.shape))
+    print("Shape of yTrain dataset: %s" % str(yTrain.shape))
+    print("Shape of xTest dataset: %s" % str(xTest.shape))
+    print("Shape of yTest dataset: %s" % str(yTest.shape))
+    print()
 
     # Return Data
     return ((xTrain, yTrain), (xTest, yTest))
@@ -142,10 +143,11 @@ def preprocess_data(raw):
     yTestP = keras.utils.to_categorical(yTest, OUTPUT_SIZE)
 
     # Display Information About Dataset
-    print("New shape of xTrain dataset: %s." % str(xTrainP.shape))
-    print("New shape of xTest dataset: %s." % str(xTestP.shape))
-    print("New shape of yTrain dataset: %s." % str(yTrainP.shape))
-    print("New shape of yTest dataset: %s." % str(yTestP.shape))
+    print("New shape of xTrain dataset: %s" % str(xTrainP.shape))
+    print("New shape of yTrain dataset: %s" % str(yTrainP.shape))
+    print("New shape of xTest dataset: %s" % str(xTestP.shape))
+    print("New shape of yTest dataset: %s" % str(yTestP.shape))
+    print()
 
     # Return Preprocessed Data
     return ((xTrain, yTrainP), (xTest, yTestP))
@@ -163,7 +165,7 @@ def train_model(data):
         return (None)
     elif (ALGORITHM == "custom_net"):
         # Display Status
-        print("Using custom neural network...")
+        print("Training custom neural network...")
 
         # Initialize New Neural Network Instance
         model = NeuralNetwork_2Layer(INPUT_SIZE, OUTPUT_SIZE, NUM_NEURON, activation = "sigmoid")
@@ -175,7 +177,7 @@ def train_model(data):
         return (model)
     elif (ALGORITHM == "tf_net"):
         # Display Status
-        print("Using Tensorflow neural network...")
+        print("Training Tensorflow neural network...")
 
         # Initialize New Sequential Instance
         model = keras.Sequential()
@@ -202,12 +204,12 @@ def train_model(data):
         return (model)
     else:
         # Throw Error Due To Invalid Algorithm
-        raise ValueError("Algorithm not recognized...")
+        raise ValueError("algorithm not recognized")
 
 def run_model(data, model):
     if (ALGORITHM == "guesser"):
         # Display Status
-        print("Running guesser classifier...")
+        print("Running guesser algorithm...")
 
         # Initialize Answer Vector
         ans = []
@@ -247,7 +249,7 @@ def run_model(data, model):
         return (np.array(preds))
     else:
         # Throw Error Due To Invalid Algorithm
-        raise ValueError("Algorithm not recognized...")
+        raise ValueError("algorithm not recognized")
 
 def eval_results(data, preds):
     # Unpack Data
@@ -276,7 +278,7 @@ def eval_results(data, preds):
     #     # Verify Predicted Values Match Expected Value
 
     # Display Classifier Metrics
-    print("Classifier algorithm: %s" % ALGORITHM)
+    print("\nClassifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (acc * 100))
 
 # End Pipeline Functions-----------------------------------------------------------------------------------------------------------------------------------------------
