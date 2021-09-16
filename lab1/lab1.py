@@ -6,7 +6,6 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow import keras
-from tensorflow.keras.utils import to_categorical
 
 # End Imports----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -90,43 +89,74 @@ class NeuralNetwork_2Layer():
 
 # Classifier Function That Guesses The Class Label
 def guesserClassifier(xTest):
+    # Initialize Answer Vector
     ans = []
-    for entry in xTest:
+
+    # Iterate Over xTest Sample
+    for entry in (xTest):
+        # Initialize Base Prediction Vector
         pred = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        # Randomly Set Class Label
         pred[random.randint(0, 9)] = 1
+
+        # Append Predicted Class To Answer Vector
         ans.append(pred)
-    return np.array(ans)
+
+    # Return
+    return (np.array(ans))
 
 # End Subroutine Functions---------------------------------------------------------------------------------------------------------------------------------------------
 
 def getRawData():
+    # Fetch MNIST Dataset From Tensorflow Imporrt
     mnist = tf.keras.datasets.mnist
+
+    # Load Data From MNIST Dataset
     (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
+
+    # Display Information About Dataset
     print("Shape of xTrain dataset: %s." % str(xTrain.shape))
     print("Shape of yTrain dataset: %s." % str(yTrain.shape))
     print("Shape of xTest dataset: %s." % str(xTest.shape))
     print("Shape of yTest dataset: %s." % str(yTest.shape))
+
+    # Return Data
     return ((xTrain, yTrain), (xTest, yTest))
 
 def preprocessData(raw):
+    # Unpack Data From Raw Input
     ((xTrain, yTrain), (xTest, yTest)) = raw            #TODO: Add range reduction here (0-255 ==> 0.0-1.0).
-    yTrainP = to_categorical(yTrain, NUM_CLASSES)
-    yTestP = to_categorical(yTest, NUM_CLASSES)
+
+    print(raw)
+    import sys
+    sys.exit()
+
+    # Convert Integers Into Binary Class Matrices
+    yTrainP = keras.utils.to_categorical(yTrain, NUM_CLASSES)
+    yTestP = keras.utils.to_categorical(yTest, NUM_CLASSES)
+
+    # Display Information About Dataset
     print("New shape of xTrain dataset: %s." % str(xTrain.shape))
     print("New shape of xTest dataset: %s." % str(xTest.shape))
     print("New shape of yTrain dataset: %s." % str(yTrainP.shape))
     print("New shape of yTest dataset: %s." % str(yTestP.shape))
+
+    # Return Preprocessed Data
     return ((xTrain, yTrainP), (xTest, yTestP))
 
 def trainModel(data):
+    # Unpack Training Data
     xTrain, yTrain = data
-    if ALGORITHM == "guesser":
-        return None   # Guesser has no model, as it is just guessing.
-    elif ALGORITHM == "custom_net":
-        print("Building and training Custom_NN.")
+
+    # Run Training Algorithm
+    if (ALGORITHM == "guesser"):
+        return (None)
+    elif (ALGORITHM == "custom_net"):
+        print("Building and training custom neural network")
         print("Not yet implemented.")                   #TODO: Write code to build and train your custon neural net.
-        return None
-    elif ALGORITHM == "tf_net":
+        return (None)
+    elif (ALGORITHM == "tf_net"):
         print("Building and training TF_NN.")
         print("Not yet implemented.")                   #TODO: Write code to build and train your keras neural net.
         return None
@@ -134,16 +164,16 @@ def trainModel(data):
         raise ValueError("Algorithm not recognized.")
 
 def runModel(data, model):
-    if ALGORITHM == "guesser":
+    if (ALGORITHM == "guesser"):
         return guesserClassifier(data)
-    elif ALGORITHM == "custom_net":
+    elif (ALGORITHM == "custom_net"):
         print("Testing Custom_NN.")
         print("Not yet implemented.")                   #TODO: Write code to run your custon neural net.
-        return None
-    elif ALGORITHM == "tf_net":
+        return (None)
+    elif (ALGORITHM == "tf_net"):
         print("Testing TF_NN.")
         print("Not yet implemented.")                   #TODO: Write code to run your keras neural net.
-        return None
+        return (None)
     else:
         raise ValueError("Algorithm not recognized.")
 
@@ -160,10 +190,19 @@ def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
 # End Pipeline Functions-----------------------------------------------------------------------------------------------------------------------------------------------
 
 if (__name__ == '__main__'):
+    # Get Raw Data
     raw = getRawData()
+
+    # Preprocess Raw Data
     data = preprocessData(raw)
+
+    # Train Model On Raw Data
     model = trainModel(data[0])
+
+    # Run Model On Raw Data
     preds = runModel(data[1][0], model)
+
+    # Evaluate Model Results
     evalResults(data[1], preds)
 
 # End Main Function----------------------------------------------------------------------------------------------------------------------------------------------------
