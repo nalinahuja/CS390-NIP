@@ -28,16 +28,16 @@ ALGORITHM = "guesser"
 random.seed(SEED_VALUE)
 np.random.seed(SEED_VALUE)
 tf.random.set_seed(SEED_VALUE)
-# tf.set_random_seed(SEED_VALUE) Uncomment for TF1.
 
-# Disable Tensorflow Logging
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-# tf.logging.set_verbosity(tf.logging.ERROR) Uncomment for TF1.
+# Tensorflow Settings
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+# tf.set_random_seed(SEED_VALUE) # Uncomment for TF1
+# tf.logging.set_verbosity(tf.logging.ERROR) # Uncomment for TF1
 
 # End Module Initialization--------------------------------------------------------------------------------------------------------------------------------------------
 
 class NeuralNetwork_2Layer():
-    def __init__(self, input_size, output_size, neurons_per_layer, activation = 'sigmoid', learning_rate = 0.1):
+    def __init__(self, input_size, output_size, neurons_per_layer, activation = "sigmoid", learning_rate = 0.1):
         # Initialize Neural Network Attributes
         self.input_size = inputSize
         self.output_size = outputSize
@@ -45,10 +45,10 @@ class NeuralNetwork_2Layer():
         self.learning_rate = learning_rate
 
         # Set Activation Function
-        if (activation == 'relu'):
+        if (activation == "relu"):
             self.__activation = self.__relu
             self.__activation_prime = self.__relu_derivative
-        elif (activation == 'sigmoid'):
+        elif (activation == "sigmoid"):
             self.__activation = self.__sigmoid
             self.__activation_prime = self.__sigmoid_derivative
         else:
@@ -166,7 +166,7 @@ def train_model(data):
         print("Using custom neural network...")
 
         # Initialize New Neural Network Instance
-        model = NeuralNetwork_2Layer(INPUT_SIZE, OUTPUT_SIZE, NUM_NEURON, activation = 'sigmoid')
+        model = NeuralNetwork_2Layer(INPUT_SIZE, OUTPUT_SIZE, NUM_NEURON, activation = "sigmoid")
 
         # Train Model With Training Data
         model.train(xTrain, yTrain, epochs = NUM_EPOCHS)
@@ -233,7 +233,7 @@ def run_model(data, model):
         preds = model.predict(data)
 
         # Return Prediction
-        return (preds)
+        return (np.array(preds))
     elif (ALGORITHM == "tf_net"):
         # Display Status
         print("Running Tensorflow neural network...")
@@ -244,7 +244,7 @@ def run_model(data, model):
         # TODO: one hot encoding
 
         # Return Prediction
-        return (preds)
+        return (np.array(preds))
     else:
         # Throw Error Due To Invalid Algorithm
         raise ValueError("Algorithm not recognized...")
