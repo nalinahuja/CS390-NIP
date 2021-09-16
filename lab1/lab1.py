@@ -13,14 +13,17 @@ from tensorflow import keras
 # Seed Value
 SEED_VALUE = 1618
 
-# Model Training Constants
-NUM_EPOCHS = 5
+# Model Structure Constants
 INPUT_SIZE = 784
 HIDDEN_SIZE = 15
 OUTPUT_SIZE = 10
 
+# Model Training Constants
+NUM_EPOCHS = 5
+LEARNING_RATE = 0.1
+
 # Selected Algorithm ("guesser", "custom_net", "tf_net")
-ALGORITHM = "guesser"
+ALGORITHM = "tf_net"
 
 # End Embedded Constants-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -125,7 +128,6 @@ def get_raw_data():
     print("Shape of yTrain dataset: %s" % str(yTrain.shape))
     print("Shape of xTest dataset: %s" % str(xTest.shape))
     print("Shape of yTest dataset: %s" % str(yTest.shape))
-    print()
 
     # Return Data
     return ((xTrain, yTrain), (xTest, yTest))
@@ -147,7 +149,6 @@ def preprocess_data(raw):
     print("New shape of yTrain dataset: %s" % str(yTrainP.shape))
     print("New shape of xTest dataset: %s" % str(xTestP.shape))
     print("New shape of yTest dataset: %s" % str(yTestP.shape))
-    print()
 
     # Return Preprocessed Data
     return ((xTrain, yTrainP), (xTest, yTestP))
@@ -186,19 +187,19 @@ def train_model(data):
         loss_func = keras.losses.categorical_crossentropy
 
         # Initialize Model Optimizer
-        opt_func = tf.train.AdamOptimizer()
+        opt_func = tf.keras.optimizers.Adam(learning_rate = LEARNING_RATE)
 
         # Add Neuron Hidden Layer To Model
-        model.add(keras.layers.Dense(HIDDEN_SIZE, input_shape = INPUT_SIZE, activation = tf.nn.relu))
+        model.add(keras.layers.Dense(HIDDEN_SIZE, input_shape = [INPUT_SIZE], activation = tf.nn.relu))
 
         # Add Neuron Output Layer To Model
-        model.add(keras.layers.Dense(OUTPUT_SIZE, input_shape = HIDDEN_SIZE, activation = tf.nn.softmax))
+        model.add(keras.layers.Dense(OUTPUT_SIZE, input_shape = [HIDDEN_SIZE], activation = tf.nn.softmax))
 
         # Compile Model
         model.compile(optimizer = opt_func, loss = loss_func)
 
         # Train Model
-        model.train(xTrain, yTrain, epochs = NUM_EPOCHS)
+        model.fit(xTrain, yTrain, epochs = NUM_EPOCHS)
 
         # Return Model
         return (model)
@@ -278,7 +279,7 @@ def eval_results(data, preds):
     #     # Verify Predicted Values Match Expected Value
 
     # Display Classifier Metrics
-    print("\nClassifier algorithm: %s" % ALGORITHM)
+    print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (acc * 100))
 
 # End Pipeline Functions-----------------------------------------------------------------------------------------------------------------------------------------------
