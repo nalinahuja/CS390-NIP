@@ -1,6 +1,7 @@
 # Modified By Nalin Ahuja, ahuja15@purdue.edu
 
 import os
+import sys
 import random
 import numpy as np
 import tensorflow as tf
@@ -12,9 +13,11 @@ from tensorflow import keras
 # Seed Value
 SEED_VALUE = 1618
 
-# Information On Dataset
-NUM_CLASSES = 10
-IMAGE_SIZE = 784
+# Model Training Constants
+NUM_EPOCHS = 5
+INPUT_SIZE = 784
+HIDDEN_SIZE = 15
+OUTPUT_SIZE = 10
 
 # Selected Algorithm ("guesser", "custom_net", "tf_net")
 ALGORITHM = "guesser"
@@ -34,16 +37,16 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # End Module Initialization--------------------------------------------------------------------------------------------------------------------------------------------
 
 class NeuralNetwork_2Layer():
-    def __init__(self, inputSize, outputSize, neuronsPerLayer, learningRate = 0.1):
+    def __init__(self, input_size, output_size, neurons_per_layer, learning_rate = 0.1):
         # Initialize Class Members From Arguments
-        self.inputSize = inputSize
-        self.outputSize = outputSize
-        self.neuronsPerLayer = neuronsPerLayer
-        self.lr = learningRate
+        self.input_size = inputSize
+        self.output_size = outputSize
+        self.neurons_per_layer = neurons_per_layer
+        self.learning_rate = learning_rate
 
         # Initialize Weights Randomly
-        self.W1 = np.random.randn(self.inputSize, self.neuronsPerLayer)
-        self.W2 = np.random.randn(self.neuronsPerLayer, self.outputSize)
+        self.W1 = np.random.randn(self.input_size, self.neurons_per_layer)
+        self.W2 = np.random.randn(self.neurons_per_layer, self.output_size)
 
     # Activation Function
     def __sigmoid(self, x):
@@ -58,17 +61,17 @@ class NeuralNetwork_2Layer():
         # Return Derivative Of Sigmoid
         return (s * (1 - s))
 
-    # Un-Randomized Batch Generator For Mini-Batches
+    # Unrandomized Batch Generator For Mini-Batches
     def __batchGenerator(self, l, n):
         for i in range(0, len(l), n):
             yield l[i : i + n]
 
-    # Training with backpropagation.
+    # Training with backpropagation
     def train(self, xVals, yVals, epochs = 100000, minibatches = True, mbs = 100):
         #TODO: Implement backprop. allow minibatches. mbs should specify the size of each minibatch.
         pass
 
-    # Forward Pass Function.
+    # Forward Pass Function
     def __forward(self, input):
         # Calculate Sigmoid Values For Layers
         layer1 = self.__sigmoid(np.dot(input, self.W1))
@@ -87,8 +90,7 @@ class NeuralNetwork_2Layer():
 
 # End Neural Network Layer Class---------------------------------------------------------------------------------------------------------------------------------------
 
-# Classifier Function That Guesses The Class Label
-def guesserClassifier(xTest):
+def guesser_classifier(xTest):
     # Initialize Answer Vector
     ans = []
 
@@ -108,7 +110,7 @@ def guesserClassifier(xTest):
 
 # End Subroutine Functions---------------------------------------------------------------------------------------------------------------------------------------------
 
-def getRawData():
+def get_raw_data():
     # Fetch MNIST Dataset From Tensorflow Imporrt
     mnist = tf.keras.datasets.mnist
 
@@ -124,7 +126,7 @@ def getRawData():
     # Return Data
     return ((xTrain, yTrain), (xTest, yTest))
 
-def preprocessData(raw):
+def preprocess_data(raw):
     # Unpack Data From Raw Input
     ((xTrain, yTrain), (xTest, yTest)) = raw
 
@@ -133,8 +135,8 @@ def preprocessData(raw):
     xTestP = np.divide(xTest, 255)
 
     # Process Integer Arrays Into Binary Class Matrices
-    yTrainP = keras.utils.to_categorical(yTrain, NUM_CLASSES)
-    yTestP = keras.utils.to_categorical(yTest, NUM_CLASSES)
+    yTrainP = keras.utils.to_categorical(yTrain, OUTPUT_SIZE)
+    yTestP = keras.utils.to_categorical(yTest, OUTPUT_SIZE)
 
     # Display Information About Dataset
     print("New shape of xTrain dataset: %s." % str(xTrainP.shape))
@@ -145,39 +147,92 @@ def preprocessData(raw):
     # Return Preprocessed Data
     return ((xTrain, yTrainP), (xTest, yTestP))
 
-def trainModel(data):
+def train_model(data):
     # Unpack Training Data
     xTrain, yTrain = data
 
     # Run Training Algorithm
     if (ALGORITHM == "guesser"):
+        # Display Status
+        print("Using guesser algorithm...")
+
+        # Return No Model
         return (None)
     elif (ALGORITHM == "custom_net"):
-        print("Building and training custom neural network")
-        print("Not yet implemented.")                                   #TODO: Write code to build and train your custon neural net.
-        return (None)
-    elif (ALGORITHM == "tf_net"):
-        print("Building and training TF_NN.")
-        print("Not yet implemented.")                                   #TODO: Write code to build and train your keras neural net.
-        return None
-    else:
-        raise ValueError("Algorithm not recognized.")
+        # Display Status
+        print("Using custom neural network...")
 
-def runModel(data, model):
+        # Initialize New Neural Network Instance
+        model = NeuralNetwork_2Layer(INPUT_SIZE, OUTPUT_SIZE, NUM_NEURONS)
+
+        # Train Model With Training Data
+        model.train(xTrain, yTrain, epochs = NUM_EPOCHS)
+
+        # Return Model
+        return (model)
+    elif (ALGORITHM == "tf_net"):
+        # Display Status
+        print("Using Tensorflow neural network...")
+
+        # Initialize New Sequential Instance
+        model = keras.Sequential()
+
+        # Initialize Loss Function
+        loss_func = keras.losses.categorical_crossentropy
+
+        # Initialize Model Optimizer
+        opt_func = tf.train.AdamOptimizer()
+
+        # Add Neuron Hidden Layer To Model
+        model.add(keras.layers.Dense(HIDDEN_SIZE, input_shape = INPUT_SIZE, activation = tf.nn.relu))
+
+        # Add Neuron Output Layer To Model
+        model.add(keras.layers.Dense(OUTPUT_SIZE, input_shape = HIDDEN_SIZE, activation = tf.nn.softmax))
+
+        # Compile Model
+        model.compile(optimizer = opt_func, loss = loss_func)
+
+        # Train Model
+        model.train(xTrain, yTrain, epochs = NUM_EPOCHS)
+
+        # Return Model
+        return (model)
+    else:
+        # Throw Error Due To Invalid Algorithm
+        raise ValueError("Algorithm not recognized...")
+
+def run_model(data, model):
     if (ALGORITHM == "guesser"):
-        return guesserClassifier(data)
-    elif (ALGORITHM == "custom_net"):
-        print("Testing Custom_NN.")
-        print("Not yet implemented.")                                   #TODO: Write code to run your custon neural net.
-        return (None)
-    elif (ALGORITHM == "tf_net"):
-        print("Testing TF_NN.")
-        print("Not yet implemented.")                                   #TODO: Write code to run your keras neural net.
-        return (None)
-    else:
-        raise ValueError("Algorithm not recognized.")
+        # Display Status
+        print("Running guesser classifier...")
 
-def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
+        # Return Prediction
+        return (guesser_classifier(data))
+    elif (ALGORITHM == "custom_net"):
+        # Display Status
+        print("Running custom neural network...")
+
+        # Run Custom Model
+        preds = model.predict(data)
+
+        # Return Prediction
+        return (preds)
+    elif (ALGORITHM == "tf_net"):
+        # Display Status
+        print("Running Tensorflow neural network...")
+
+        # Run Keras Model
+        preds = model.predict(data)
+
+        # TODO: one hot encoding
+
+        # Return Prediction
+        return (preds)
+    else:
+        # Throw Error Due To Invalid Algorithm
+        raise ValueError("Algorithm not recognized...")
+
+def eval_results(data, preds):
     # Unpack Data
     xTest, yTest = data
 
@@ -194,6 +249,15 @@ def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
     # Calculate Accuracy
     acc /= preds.shape[0]
 
+    # TODO: Add F1 score and confusion matrix
+
+    # Initialize Prediction Metrics
+    tp = tn = fp = fn = 0
+
+    # # Iterate Over Predicted Values
+    # for i in range(preds.shape[0]):
+    #     # Verify Predicted Values Match Expected Value
+
     # Display Classifier Metrics
     print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (accuracy * 100))
@@ -202,18 +266,18 @@ def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
 
 if (__name__ == '__main__'):
     # Get Raw Data
-    raw = getRawData()
+    raw = get_raw_data()
 
     # Preprocess Raw Data
-    data = preprocessData(raw)
+    data = preprocess_data(raw)
 
     # Train Model On Raw Data
-    model = trainModel(data[0])
+    model = train_model(data[0])
 
     # Run Model On Raw Data
-    preds = runModel(data[1][0], model)
+    preds = run_model(data[1][0], model)
 
     # Evaluate Model Results
-    evalResults(data[1], preds)
+    eval_results(data[1], preds)
 
 # End Main Function----------------------------------------------------------------------------------------------------------------------------------------------------
