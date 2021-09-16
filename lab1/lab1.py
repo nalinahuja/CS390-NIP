@@ -213,7 +213,7 @@ def run_model(data, model):
         ans = []
 
         # Iterate Over xTest Sample
-        for entry in (xTest):
+        for entry in (data):
             # Initialize Base Prediction Vector
             pred = [0] * 10
 
@@ -277,7 +277,7 @@ def eval_results(data, preds):
 
     # Display Classifier Metrics
     print("Classifier algorithm: %s" % ALGORITHM)
-    print("Classifier accuracy: %f%%" % (accuracy * 100))
+    print("Classifier accuracy: %f%%" % (acc * 100))
 
 # End Pipeline Functions-----------------------------------------------------------------------------------------------------------------------------------------------
 
