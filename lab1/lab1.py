@@ -37,24 +37,45 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # End Module Initialization--------------------------------------------------------------------------------------------------------------------------------------------
 
 class NeuralNetwork_2Layer():
-    def __init__(self, input_size, output_size, neurons_per_layer, learning_rate = 0.1):
-        # Initialize Class Members From Arguments
+    def __init__(self, input_size, output_size, neurons_per_layer, activation = 'sigmoid', learning_rate = 0.1):
+        # Initialize Neural Network Attributes
         self.input_size = inputSize
         self.output_size = outputSize
         self.neurons_per_layer = neurons_per_layer
         self.learning_rate = learning_rate
 
+        # Set Activation Function
+        if (activation == 'relu'):
+            self.__activation = self.__relu
+            self.__activation_prime = self.__relu_derivative
+        elif (activation == 'sigmoid'):
+            self.__activation = self.__sigmoid
+            self.__activation_prime = self.__sigmoid_derivative
+        else:
+            # Throw Error Due To Invalid Activation Function
+            raise ValueError("Activation function not recognized...")
+
         # Initialize Weights Randomly
         self.W1 = np.random.randn(self.input_size, self.neurons_per_layer)
         self.W2 = np.random.randn(self.neurons_per_layer, self.output_size)
 
-    # Activation Function
+    # ReLU Activation Function
+    def __relu(self, x):
+        # Compute ReLU Value At X
+        return (max(0, x))
+
+    # ReLU Activation Function Derivative
+    def __relu_derivative(self, x):
+        # Return Derivative Of ReLU
+        return ((1) if (x > 0) else (0))
+
+    # Sigmoid Activation Function
     def __sigmoid(self, x):
         # Compute Sigmoid Value At X
         return (1 / (1 + np.exp(-x)))
 
-    # Activation Function Derivative
-    def __sigmoidDerivative(self, x):
+    # Sigmoid Activation Function Derivative
+    def __sigmoid_derivative(self, x):
         # Compute Sigmoid Value At X
         s = self.__sigmoid(x)
 
@@ -63,7 +84,9 @@ class NeuralNetwork_2Layer():
 
     # Unrandomized Batch Generator For Mini-Batches
     def __batchGenerator(self, l, n):
+        # Iterate Over Training Samples
         for i in range(0, len(l), n):
+            # Return Slice Of Training Samples
             yield l[i : i + n]
 
     # Training with backpropagation
@@ -74,8 +97,8 @@ class NeuralNetwork_2Layer():
     # Forward Pass Function
     def __forward(self, input):
         # Calculate Sigmoid Values For Layers
-        layer1 = self.__sigmoid(np.dot(input, self.W1))
-        layer2 = self.__sigmoid(np.dot(layer1, self.W2))
+        layer1 = self.__activation(np.dot(input, self.W1))
+        layer2 = self.__activation(np.dot(layer1, self.W2))
 
         # Return Result
         return (layer1, layer2)
@@ -89,26 +112,6 @@ class NeuralNetwork_2Layer():
         return (layer2)
 
 # End Neural Network Layer Class---------------------------------------------------------------------------------------------------------------------------------------
-
-def guesser_classifier(xTest):
-    # Initialize Answer Vector
-    ans = []
-
-    # Iterate Over xTest Sample
-    for entry in (xTest):
-        # Initialize Base Prediction Vector
-        pred = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-        # Randomly Set Class Label
-        pred[random.randint(0, 9)] = 1
-
-        # Append Predicted Class To Answer Vector
-        ans.append(pred)
-
-    # Return
-    return (np.array(ans))
-
-# End Subroutine Functions---------------------------------------------------------------------------------------------------------------------------------------------
 
 def get_raw_data():
     # Fetch MNIST Dataset From Tensorflow Imporrt
@@ -163,7 +166,7 @@ def train_model(data):
         print("Using custom neural network...")
 
         # Initialize New Neural Network Instance
-        model = NeuralNetwork_2Layer(INPUT_SIZE, OUTPUT_SIZE, NUM_NEURONS)
+        model = NeuralNetwork_2Layer(INPUT_SIZE, OUTPUT_SIZE, NUM_NEURON, activation = 'sigmoid')
 
         # Train Model With Training Data
         model.train(xTrain, yTrain, epochs = NUM_EPOCHS)
@@ -206,8 +209,22 @@ def run_model(data, model):
         # Display Status
         print("Running guesser classifier...")
 
+        # Initialize Answer Vector
+        ans = []
+
+        # Iterate Over xTest Sample
+        for entry in (xTest):
+            # Initialize Base Prediction Vector
+            pred = [0] * 10
+
+            # Randomly Set Class Label
+            pred[random.randint(0, 9)] = 1
+
+            # Append Predicted Class To Answer Vector
+            ans.append(pred)
+
         # Return Prediction
-        return (guesser_classifier(data))
+        return (np.array(ans))
     elif (ALGORITHM == "custom_net"):
         # Display Status
         print("Running custom neural network...")
