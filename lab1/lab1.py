@@ -10,7 +10,7 @@ from tensorflow import keras
 
 # End Imports----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Seed Value
+# Random Seed Value
 SEED_VALUE = 1618
 
 # General Neural Network Structure Constants
@@ -217,7 +217,7 @@ def get_data():
     print("Shape of y_train dataset: %s" % (str(y_train.shape)))
     print("Shape of x_test dataset: %s" % (str(x_test.shape)))
     print("Shape of y_test dataset: %s" % (str(y_test.shape)))
-    print()
+    print("\n" * 1, end = "")
 
     # Return Data
     return ((x_train, y_train), (x_test, y_test))
@@ -243,7 +243,7 @@ def process_data(raw):
     print("New shape of y_train dataset: %s" % (str(y_train.shape)))
     print("New shape of x_test dataset: %s" % (str(x_test.shape)))
     print("New shape of y_test dataset: %s" % (str(y_test.shape)))
-    print()
+    print("\n" * 1, end = "")
 
     # Return Preprocessed Data
     return ((x_train, y_train), (x_test, y_test))
@@ -384,19 +384,69 @@ def eval_results(data, y_preds):
     accuracy /= y_preds.shape[0]
 
     # Initialize Confusion Matrix Representation
-    confusion = np.zeros((OUTPUT_SIZE, OUTPUT_SIZE))
+    cm = np.zeros((OUTPUT_SIZE, OUTPUT_SIZE), dtype = np.int32)
 
     # Iterate Over Predicted Values
     for i in range(y_preds.shape[0]):
         # Update Confusion Matrix
-        confusion[y_test[i]][y_preds[i]] += 1
+        cm[y_test[i]][y_preds[i]] += 1
 
-    # Initialize Class Accuracy Indications
-    tp = fp = fn = tn = 0
+    # Calculate Confusion Matrix Sum
+    cm_sum = np.sum(cm)
+
+    # Initialize F1 Scores Vector Representation
+    f1 = np.zeros(OUTPUT_SIZE)
+
+    # Iterate Over Output Dimension
+    for i in range(OUTPUT_SIZE):
+        # Determine True Positives
+        tp = cm[i][i]
+
+        # Determine False Positives
+        fp = sum(cm[i][j] for j in range(OUTPUT_SIZE) if (i != j))
+
+        # Determine False Negatives
+        fn = sum(cm[j][i] for j in range(OUTPUT_SIZE) if (i != j))
+
+        # Calculate F1 Score For Class
+        f1[i] = float(tp / (tp + (0.5 * (fp + fn))))
 
     # Display Classifier Metrics
     print("Classifier algorithm: %s" % (ALGORITHM))
     print("Classifier accuracy: %f%%" % (accuracy * 100))
+
+    # Print Confusion Matrix Header
+    print("\nConfusion Matrix:")
+
+    # Print Column Label Padding
+    print(" " * 3, end = "")
+
+    # Print Matrix Column Labels
+    for i in range(OUTPUT_SIZE):
+        print("%3d" % (i), end = " ")
+
+    # Print Separator
+    print("\n" * 1, end = "")
+
+    # Print Labeled Classifier Confusion Matrix
+    for i in range(OUTPUT_SIZE):
+        print(i, cm[i])
+
+    # Print F1 Score Header
+    print("\nF1 Scores:")
+
+    # Print Column Label Padding
+    print(" " * 1, end = "")
+
+    # Print F1 Score Column Labels
+    for i in range(OUTPUT_SIZE):
+        print("%6d" % (i), end = " ")
+
+    # Print Separator
+    print("\n" * 1, end = "")
+
+    # Print F1 Scores
+    print(np.around(f1, decimals = 4))
 
 # End Pipeline Functions-----------------------------------------------------------------------------------------------------------------------------------------------
 
