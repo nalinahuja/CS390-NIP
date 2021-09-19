@@ -1,7 +1,6 @@
 # Modified By Nalin Ahuja, ahuja15@purdue.edu
 
 import os
-import sys
 import random
 import numpy as np
 import tensorflow as tf
@@ -45,16 +44,16 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 # End Module Initialization--------------------------------------------------------------------------------------------------------------------------------------------
 
 class NeuralNetwork_2Layer():
-    def __init__(self, input_size, output_size, neurons_per_layer, learning_rate = 0.001):
+    def __init__(self, input_size, output_size, layer_neurons, learning_rate = 0.001):
         # Initialize Neural Network Attributes
         self.input_size = input_size
         self.output_size = output_size
-        self.neurons_per_layer = neurons_per_layer
+        self.layer_neurons = layer_neurons
         self.learning_rate = learning_rate
 
         # Initialize Weights Randomly
-        self.W1 = np.random.randn(self.input_size, self.neurons_per_layer)
-        self.W2 = np.random.randn(self.neurons_per_layer, self.output_size)
+        self.W1 = np.random.randn(self.input_size, self.layer_neurons)
+        self.W2 = np.random.randn(self.layer_neurons, self.output_size)
 
     # Sigmoid Activation Function
     def __sigmoid(self, x):
@@ -84,20 +83,6 @@ class NeuralNetwork_2Layer():
 
         # Return Result
         return (layer1, layer2)
-
-    # Loss Function
-    def __loss(self, target, out):
-        # Calculate Squared Differences
-        loss = np.square(np.subtract(target, out))
-
-        # Scalar Divide Squared Differences
-        loss = np.divide(loss, 2)
-
-        # Sum Over All Squared Differences
-        loss = np.sum(loss)
-
-        # Return Loss
-        return (loss)
 
     # Loss Function Derivative
     def __loss_prime(self, target, out):
@@ -158,7 +143,7 @@ class NeuralNetwork_2Layer():
                 logistic_prime = self.__sigmoid_prime(l2_out)
 
                 # Calculate Output Layer Output Differences
-                l2_diffs = loss_prime * logistic_prime
+                l2_diffs = np.multiply(loss_prime, logistic_prime)
 
                 # Calculate Error Derivative For All Hidden Layer Neurons
                 error_prime = np.dot(l2_diffs, np.transpose(self.W2))
@@ -167,7 +152,7 @@ class NeuralNetwork_2Layer():
                 logistic_prime = self.__sigmoid_prime(l1_out)
 
                 # Calculate Hidden Layer Output Differences
-                l1_diffs = error_prime * logistic_prime
+                l1_diffs = np.multiply(error_prime, logistic_prime)
 
                 # Compute Output Layer Weight Adjustments
                 l2_adj = np.matmul(np.transpose(l1_out), l2_diffs)
@@ -357,9 +342,6 @@ def run_model(data, model):
         # Throw Error Due To Invalid Algorithm
         raise ValueError("algorithm not recognized")
 
-    # Print Separator
-    print()
-
 def eval_results(data, y_preds):
     # Unpack Output Test Data
     _, y_test = data
@@ -370,7 +352,7 @@ def eval_results(data, y_preds):
     # Format Prediction Data
     y_preds = np.argmax(y_preds, axis = 1)
 
-    # Initialize Accuracy
+    # Initialize Accuracy Metric
     accuracy = 0
 
     # Iterate Over Predicted Values
@@ -394,10 +376,10 @@ def eval_results(data, y_preds):
     # Calculate Confusion Matrix Sum
     cm_sum = np.sum(cm)
 
-    # Initialize F1 Scores Vector Representation
+    # Initialize F1 Scores Representation
     f1 = np.zeros(OUTPUT_SIZE)
 
-    # Iterate Over Output Dimension
+    # Iterate Over Class Labels
     for i in range(OUTPUT_SIZE):
         # Determine True Positives
         tp = cm[i][i]
@@ -408,7 +390,7 @@ def eval_results(data, y_preds):
         # Determine False Negatives
         fn = sum(cm[j][i] for j in range(OUTPUT_SIZE) if (i != j))
 
-        # Calculate F1 Score For Class
+        # Calculate F1 Score For Class Label
         f1[i] = float(tp / (tp + (0.5 * (fp + fn))))
 
     # Display Classifier Metrics
