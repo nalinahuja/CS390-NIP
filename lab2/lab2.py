@@ -25,49 +25,50 @@ DATASET = "mnist_d"
 # Conditonally Initialize TensorFlow Network Structure
 if (DATASET == "mnist_d"):
     # Set Number Of Classes
-    NUM_CLASSES = 10
+    OUTPUT_SIZE = 10
 
     # Set Input Dimensions
-    IH = 28
-    IW = 28
-    IZ = 1
-    IS = IH * IW * IZ
+    INPUT_X = 28
+    INPUT_Y = 28
+    INPUT_Z = 1
 elif (DATASET == "mnist_f"):
     # Set Number Of Classes
-    NUM_CLASSES = 10
+    OUTPUT_SIZE = 10
 
     # Set Input Dimensions
-    IH = 28
-    IW = 28
-    IZ = 1
-    IS = IH * IW * IZ
+    INPUT_X = 28
+    INPUT_Y = 28
+    INPUT_Z = 1
 elif (DATASET == "cifar_10"):
     # Set Number Of Classes
-    NUM_CLASSES = 10
+    OUTPUT_SIZE = 10
 
     # Set Input Dimensions
-    IH = 32
-    IW = 32
-    IZ = 3
-    IS = IH * IW * IZ
+    INPUT_X = 32
+    INPUT_Y = 32
+    INPUT_Z = 3
 elif (DATASET == "cifar_100_f"):
     # Set Number Of Classes
-    NUM_CLASSES = 100
+    OUTPUT_SIZE = 100
 
     # Set Input Dimensions
-    IH = 32
-    IW = 32
-    IZ = 3
-    IS = IH * IW * IZ
+    INPUT_X = 32
+    INPUT_Y = 32
+    INPUT_Z = 3
 elif (DATASET == "cifar_100_c"):
     # Set Number Of Classes
-    NUM_CLASSES = 20
+    OUTPUT_SIZE = 20
 
     # Set Input Dimensions
-    IH = 32
-    IW = 32
-    IZ = 3
-    IS = IH * IW * IZ
+    INPUT_X = 32
+    INPUT_Y = 32
+    INPUT_Z = 3
+
+# Set Hidden Size
+HIDDEN_SIZE = 512
+
+# Set Input Size
+INPUT_SIZE = INPUT_X * INPUT_Y * INPUT_Z
 
 # End Embedded Constants------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -83,9 +84,36 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 # End Module Initialization---------------------------------------------------------------------------------------------------------------------------------------------
 
-def build_tf_neural_net(x, y, eps = 6):
-    # TODO: Implement a standard ANN here.
-    return None
+def build_tf_neural_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_RATE):
+    # Initialize New Sequential Model Instance
+    model = keras.Sequential()
+
+    # Add Flattening Layer To Model
+    model.add(keras.layers.Flatten())
+
+    # Add Neuron Hidden Layer To Model
+    model.add(keras.layers.Dense(HIDDEN_SIZE, input_shape = [INPUT_SIZE], activation = tf.nn.relu))
+
+    # Add Neuron Output Layer To Model
+    model.add(keras.layers.Dense(OUTPUT_SIZE, input_shape = [HIDDEN_SIZE], activation = tf.nn.softmax))
+
+    # Initialize Loss Function
+    loss_func = keras.losses.categorical_crossentropy
+
+    # Initialize Model Optimizer
+    opt_func = tf.optimizers.Adam(learning_rate = lr)
+
+    # Compile Model
+    model.compile(loss = loss_func, optimizer = opt_func, metrics = ["accuracy"])
+
+    # Train Model
+    model.fit(x_train, y_train, epochs = eps)
+
+    # Print Separator
+    print("\n" * 1, end = "")
+
+    # Return Model
+    return (model)
 
 def build_tf_conv_net(x, y, eps = 10, dropout = True, dropRate = 0.2):
      # TODO: Implement a CNN here. dropout option is required.
@@ -148,16 +176,16 @@ def process_data(raw):
     # Conditionally Reshape Input Data
     if (ALGORITHM == "tf_conv"):
         # Reshape Input Data To Fit Convolutional Networks
-        x_train = x_train.reshape((x_train.shape[0], IH, IW, IZ))
-        x_test = x_test.reshape((x_test.shape[0], IH, IW, IZ))
+        x_train = x_train.reshape((x_train.shape[0], INPUT_X, INPUT_Y, INPUT_Z))
+        x_test = x_test.reshape((x_test.shape[0], INPUT_X, INPUT_Y, INPUT_Z))
     else:
         # Reshape Input Data To Fit Non-Convolutional Networks
-        x_train = x_train.reshape((x_train.shape[0], IS))
-        x_test = x_test.reshape((x_test.shape[0], IS))
+        x_train = x_train.reshape((x_train.shape[0], INPUT_SIZE))
+        x_test = x_test.reshape((x_test.shape[0], INPUT_SIZE))
 
     # Process Integer Arrays Into Binary Class Matrices
-    y_train = keras.utils.to_categorical(y_train, NUM_CLASSES)
-    y_test = keras.utils.to_categorical(y_test, NUM_CLASSES)
+    y_train = keras.utils.to_categorical(y_train, OUTPUT_SIZE)
+    y_test = keras.utils.to_categorical(y_test, OUTPUT_SIZE)
 
     # Display Information About Dataset
     print("New shape of x_train dataset: %s." % str(x_train.shape))
@@ -204,7 +232,7 @@ def run_model(data, model):
         # Iterate Over Data Sample
         for i in range(len(data)):
             # Initialize Base Prediction Vector
-            pred = np.zeros(NUM_CLASSES)
+            pred = np.zeros(OUTPUT_SIZE)
 
             # Randomly Set Class Label
             pred[random.randint(0, 9)] = 1
@@ -262,7 +290,6 @@ def eval_results(data, y_preds):
     # Display Classifier Metrics
     print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (accuracy * 100))
-    print("\n" * 1, end = "")
 
 # End Pipeline Functions------------------------------------------------------------------------------------------------------------------------------------------------
 
