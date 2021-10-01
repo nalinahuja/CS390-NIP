@@ -17,10 +17,10 @@ TF_NUM_EPOCHS = 15
 TF_LEARNING_RATE = 0.001
 
 # Selected Algorithm ("guesser", "tf_net", "tf_conv")
-ALGORITHM = "guesser"
+ALGORITHM = "tf_net"
 
 # Selected Dataset ("mnist_d", "mnist_f", "cifar_10", "cifar_100_f", "cifar_100_c")
-DATASET = "mnist_d"
+DATASET = "cifar_10"
 
 # Conditonally Initialize TensorFlow Network Structure
 if (DATASET == "mnist_d"):
@@ -84,6 +84,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 # End Module Initialization---------------------------------------------------------------------------------------------------------------------------------------------
 
+# TODO: Implement a ANN here
 def build_tf_neural_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_RATE):
     # Initialize New Sequential Model Instance
     model = keras.Sequential()
@@ -115,9 +116,44 @@ def build_tf_neural_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_
     # Return Model
     return (model)
 
-def build_tf_conv_net(x, y, eps = 10, dropout = True, dropRate = 0.2):
-     # TODO: Implement a CNN here. dropout option is required.
-    return None
+# TODO: Implement a CNN here. dropout option is required
+def build_tf_conv_net(x, y, eps = 10, dropout = True, drop_rate = 0.2):
+    # Initialize New Sequential Model Instance
+    model = keras.Sequential()
+
+    # Add Convolutional Network Layers
+    model.add(keras.layers.Cov2D(32, kernel_size = (3, 3), input_shape = [INPUT_X, INPUT_Y, INPUT_Z], activation = tf.nn.relu))
+    model.add(keras.layers.Cov2D(64, kernel_size = (3, 3), activation = tf.nn.relu))
+
+    # Add Pooling Layer
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+
+    # Add Flattening Layer
+    model.add(keras.layers.Flatten())
+
+    # TODO dropout layer
+
+    # Add Dense Layers
+    model.add(keras.layers.Dense(128, activation = tf.nn.relu))
+    model.add(keras.layers.Dense(OUTPUT_SIZE, activation = tf.nn.softmax))
+
+    # Initialize Loss Function
+    loss_func = keras.losses.categorical_crossentropy
+
+    # Initialize Model Optimizer
+    opt_func = tf.optimizers.Adam(learning_rate = lr)
+
+    # Compile Model
+    model.compile(loss = loss_func, optimizer = opt_func, metrics = ["accuracy"])
+
+    # Train Model
+    model.fit(x_train, y_train, epochs = eps)
+
+    # Print Separator
+    print("\n" * 1, end = "")
+
+    # Return Model
+    return (model)
 
 # End Classifier Functions----------------------------------------------------------------------------------------------------------------------------------------------
 
