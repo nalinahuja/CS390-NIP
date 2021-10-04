@@ -1,6 +1,7 @@
 # Modified By Nalin Ahuja, ahuja15@purdue.edu
 
 import os
+import sys
 import random
 import numpy as np
 import tensorflow as tf
@@ -21,6 +22,14 @@ ALGORITHM = "tf_net"
 
 # Selected Dataset ("mnist_d", "mnist_f", "cifar_10", "cifar_100_f", "cifar_100_c")
 DATASET = "cifar_10"
+
+# Extract Arguments From Commandline
+args = sys.argv[1:]
+
+# Verify Argument Count
+if (len(args) == 2):
+    # Override Embedded Constants
+    ALGORITHM, DATASET = args
 
 # Conditonally Initialize TensorFlow Network Structure
 if (DATASET == "mnist_d"):
@@ -84,7 +93,6 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 # End Module Initialization---------------------------------------------------------------------------------------------------------------------------------------------
 
-# TODO: Implement a ANN here
 def build_tf_neural_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_RATE):
     # Initialize New Sequential Model Instance
     model = keras.Sequential()
@@ -117,7 +125,7 @@ def build_tf_neural_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_
     return (model)
 
 # TODO: Implement a CNN here. dropout option is required
-def build_tf_conv_net(x, y, eps = 10, dropout = True, drop_rate = 0.2):
+def build_tf_conv_net(x, y, eps = 10, drop_out = True, drop_rate = 0.2):
     # Initialize New Sequential Model Instance
     model = keras.Sequential()
 
@@ -132,6 +140,8 @@ def build_tf_conv_net(x, y, eps = 10, dropout = True, drop_rate = 0.2):
     model.add(keras.layers.Flatten())
 
     # TODO dropout layer
+    if (drop_out):
+        model.add(keras.layers.Dropout(drop_rate, input_shape=(2,)))
 
     # Add Dense Layers
     model.add(keras.layers.Dense(128, activation = tf.nn.relu))
