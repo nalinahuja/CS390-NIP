@@ -1,0 +1,23 @@
+Guesser Model
+-------------
+mnist_d     - 9.68%
+mnist_f     - 9.85%
+cifar_10    - 9.91%
+cifar_100_c - 5.43%
+cifar_100_f - 0.90%
+
+TensorFlow ANN
+--------------
+mnist_d     - 95.73%
+mnist_f     - 83.67%
+cifar_10    - 10.02%
+cifar_100_c -  5.00%
+cifar_100_f -  1.00%
+
+TensorFlow CNN
+--------------
+mnist_d     - 99.37%
+mnist_f     - 92.11%
+cifar_10    - 74.71%
+cifar_100_c - 55.21%
+cifar_100_f - 41.97%
