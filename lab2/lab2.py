@@ -11,7 +11,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 # Random Seed Value
 SEED_VALUE = 1618
 
-# TensorFlow Classifier Training Constants
+# TensorFlow Model Hyperparameters
 TF_DROP_OUT = 0.20
 TF_NUM_EPOCHS = 10
 TF_LEARNING_RATE = 0.001
@@ -139,7 +139,7 @@ def build_tf_conv_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_RA
     model.add(keras.layers.Conv2D(32, kernel_size = [3, 3], activation = tf.nn.relu, input_shape = [INPUT_X, INPUT_Y, INPUT_Z]))
     model.add(keras.layers.Conv2D(32, kernel_size = [3, 3], activation = tf.nn.relu))
 
-    # Add Normalization And Pooling Layers
+    # Add Pooling And Normalization Layers
     model.add(keras.layers.MaxPooling2D(pool_size = [2, 2]))
     model.add(keras.layers.BatchNormalization())
 
@@ -147,7 +147,7 @@ def build_tf_conv_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_RA
     model.add(keras.layers.Conv2D(64, kernel_size = [3, 3], activation = tf.nn.relu))
     model.add(keras.layers.Conv2D(64, kernel_size = [3, 3], activation = tf.nn.relu))
 
-    # Add Normalization And Pooling Layers
+    # Add Pooling And Normalization Layers
     model.add(keras.layers.MaxPooling2D(pool_size = [2, 2]))
     model.add(keras.layers.BatchNormalization())
 
