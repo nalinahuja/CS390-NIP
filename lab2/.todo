@@ -16,8 +16,8 @@ cifar_100_c - 5.0000%
 
 TensorFlow CNN
 --------------
-$ py lab2.py tf_conv mnist_d     - 
-$ py lab2.py tf_conv mnist_f     -
-$ py lab2.py tf_conv cifar_10    -
-$ py lab2.py tf_conv cifar_100_f -
-$ py lab2.py tf_conv cifar_100_c -
+mnist_d     - 99.370%
+mnist_f     - 92.110%
+cifar_10    - 74.710%
+cifar_100_f - 41.970%
+cifar_100_c - 55.210%

@@ -2,19 +2,18 @@
 
 import os
 import sys
-import random
-import numpy as np
-import tensorflow as tf
 
-from tensorflow import keras
+# Set TensorFlow Logging Level
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
-# End Imports----------------------------------------------------------------------------------------------------------------------------------------------------------
+# End Module Imports----------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Random Seed Value
 SEED_VALUE = 1618
 
 # TensorFlow Classifier Training Constants
-TF_NUM_EPOCHS = 15
+TF_DROP_OUT = 0.20
+TF_NUM_EPOCHS = 10
 TF_LEARNING_RATE = 0.001
 
 # Selected Algorithm ("guesser", "tf_net", "tf_conv")
@@ -81,17 +80,22 @@ INPUT_SIZE = INPUT_X * INPUT_Y * INPUT_Z
 
 # End Embedded Constants------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Setting Random Seeds To Maintain Deterministic Behavior
+import random
+import numpy as np
+import tensorflow as tf
+
+from tensorflow import keras
+
+# Set Deterministic Random Seeds
 random.seed(SEED_VALUE)
 np.random.seed(SEED_VALUE)
 tf.random.set_seed(SEED_VALUE)
 
 # Tensorflow Settings
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 # tf.set_random_seed(SEED_VALUE) # Uncomment for TF1
 # tf.logging.set_verbosity(tf.logging.ERROR) # Uncomment for TF1
 
-# End Module Initialization---------------------------------------------------------------------------------------------------------------------------------------------
+# End Module Imports----------------------------------------------------------------------------------------------------------------------------------------------------
 
 def build_tf_neural_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_RATE):
     # Initialize New Sequential Model Instance
@@ -124,27 +128,46 @@ def build_tf_neural_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_
     # Return Model
     return (model)
 
-def build_tf_conv_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_RATE, drop_out = True, drop_rate = 0.2):
+def build_tf_conv_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_RATE, drop_out = True, drop_rate = TF_DROP_OUT):
     # Initialize New Sequential Model Instance
     model = keras.Sequential()
 
     # Add Convolutional Network Layers
-    model.add(keras.layers.Conv2D(32, kernel_size = [3, 3], input_shape = [INPUT_X, INPUT_Y, INPUT_Z], activation = tf.nn.relu))
+    model.add(keras.layers.Conv2D(32, kernel_size = [3, 3], activation = tf.nn.relu, input_shape = [INPUT_X, INPUT_Y, INPUT_Z]))
+    model.add(keras.layers.Conv2D(32, kernel_size = [3, 3], activation = tf.nn.relu))
+
+    # Add Normalization And Pooling Layers
+    model.add(keras.layers.MaxPooling2D(pool_size = [2, 2]))
+    model.add(keras.layers.BatchNormalization())
+
+    # Add Convolutional Network Layers
+    model.add(keras.layers.Conv2D(64, kernel_size = [3, 3], activation = tf.nn.relu))
     model.add(keras.layers.Conv2D(64, kernel_size = [3, 3], activation = tf.nn.relu))
 
-    # Add Pooling Layer
+    # Add Normalization And Pooling Layers
     model.add(keras.layers.MaxPooling2D(pool_size = [2, 2]))
+    model.add(keras.layers.BatchNormalization())
+
+    # Add Flattening Layer
+    model.add(keras.layers.Flatten())
+
+    # Add Dense Layer
+    model.add(keras.layers.Dense(256, activation = tf.nn.relu))
 
     # Check Dropout Setting
     if (drop_out):
         # Add Dropout Layer
         model.add(keras.layers.Dropout(drop_rate, input_shape = [2]))
 
-    # Add Flattening Layer
-    model.add(keras.layers.Flatten())
-
-    # Add Dense Layers
+    # Add Dense Layer
     model.add(keras.layers.Dense(128, activation = tf.nn.relu))
+
+    # Check Dropout Setting
+    if (drop_out):
+        # Add Dropout Layer
+        model.add(keras.layers.Dropout(drop_rate, input_shape = [2]))
+
+    # Add Output Layer
     model.add(keras.layers.Dense(OUTPUT_SIZE, activation = tf.nn.softmax))
 
     # Initialize Loss Function
@@ -256,13 +279,13 @@ def train_model(data):
         print("Training TensorFlow neural network...")
 
         # Return Model
-        return (build_tf_neural_net(x_train, y_train))
+        return (build_tf_neural_net(x_train, y_train, eps = 15))
     elif (ALGORITHM == "tf_conv"):
         # Display Status
         print("Training Tensorflow convolutional network...")
 
         # Return Model
-        return (build_tf_conv_net(x_train, y_train))
+        return (build_tf_conv_net(x_train, y_train, eps = 10))
     else:
         # Throw Error Due To Invalid Algorithm
         raise ValueError("algorithm not recognized")
