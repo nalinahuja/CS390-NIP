@@ -18,10 +18,10 @@ TF_NUM_EPOCHS = 15
 TF_LEARNING_RATE = 0.001
 
 # Selected Algorithm ("guesser", "tf_net", "tf_conv")
-ALGORITHM = "tf_net"
+ALGORITHM = "guesser"
 
 # Selected Dataset ("mnist_d", "mnist_f", "cifar_10", "cifar_100_f", "cifar_100_c")
-DATASET = "cifar_10"
+DATASET = "mnist_d"
 
 # Extract Arguments From Commandline
 args = sys.argv[1:]
@@ -124,7 +124,6 @@ def build_tf_neural_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_
     # Return Model
     return (model)
 
-# TODO: Implement a CNN here. dropout option is required
 def build_tf_conv_net(x, y, eps = 10, drop_out = True, drop_rate = 0.2):
     # Initialize New Sequential Model Instance
     model = keras.Sequential()
@@ -136,15 +135,16 @@ def build_tf_conv_net(x, y, eps = 10, drop_out = True, drop_rate = 0.2):
     # Add Pooling Layer
     model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
 
+    # Check Dropout Setting
+    if (drop_out):
+        # Add Dropout Layer
+        model.add(keras.layers.Dropout(drop_rate, input_shape = [2]))
+
     # Add Flattening Layer
     model.add(keras.layers.Flatten())
 
-    # TODO dropout layer
-    if (drop_out):
-        model.add(keras.layers.Dropout(drop_rate, input_shape=(2,)))
-
     # Add Dense Layers
-    model.add(keras.layers.Dense(128, activation = tf.nn.relu))
+    model.add(keras.layers.Dense(256, activation = tf.nn.relu))
     model.add(keras.layers.Dense(OUTPUT_SIZE, activation = tf.nn.softmax))
 
     # Initialize Loss Function

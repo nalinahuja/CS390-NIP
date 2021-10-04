@@ -1,23 +1,23 @@
 Guesser Model
 -------------
-"mnist_d" - Done
-"mnist_f" - Done
-"cifar_10" - Done
-"cifar_100_f" - Done
-"cifar_100_c" - Done
+mnist_d     - 9.680%
+mnist_f     - 9.850%
+cifar_10    - 9.910%
+cifar_100_f - 0.900%
+cifar_100_c - 5.430%
 
 TensorFlow ANN
 --------------
-"mnist_d" - Done
-"mnist_f" - 
-"cifar_10" -
-"cifar_100_f" -
-"cifar_100_c" -
+mnist_d     - 95.820%
+mnist_f     - 81.380%
+cifar_10    - 10.020%
+cifar_100_f - 1.0000%
+cifar_100_c - 5.0000%
 
 TensorFlow CNN
 --------------
-"mnist_d" -
-"mnist_f" -
-"cifar_10" -
-"cifar_100_f" -
-"cifar_100_c" -
+$ py lab2.py tf_conv mnist_d     -
+$ py lab2.py tf_conv mnist_f     -
+$ py lab2.py tf_conv cifar_10    -
+$ py lab2.py tf_conv cifar_100_f -
+$ py lab2.py tf_conv cifar_100_c -
