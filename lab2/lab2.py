@@ -87,7 +87,7 @@ np.random.seed(SEED_VALUE)
 tf.random.set_seed(SEED_VALUE)
 
 # Tensorflow Settings
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 # tf.set_random_seed(SEED_VALUE) # Uncomment for TF1
 # tf.logging.set_verbosity(tf.logging.ERROR) # Uncomment for TF1
 
@@ -124,16 +124,16 @@ def build_tf_neural_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_
     # Return Model
     return (model)
 
-def build_tf_conv_net(x, y, eps = 10, drop_out = True, drop_rate = 0.2):
+def build_tf_conv_net(x_train, y_train, eps = TF_NUM_EPOCHS, lr = TF_LEARNING_RATE, drop_out = True, drop_rate = 0.2):
     # Initialize New Sequential Model Instance
     model = keras.Sequential()
 
     # Add Convolutional Network Layers
-    model.add(keras.layers.Cov2D(32, kernel_size = (3, 3), input_shape = [INPUT_X, INPUT_Y, INPUT_Z], activation = tf.nn.relu))
-    model.add(keras.layers.Cov2D(64, kernel_size = (3, 3), activation = tf.nn.relu))
+    model.add(keras.layers.Conv2D(32, kernel_size = [3, 3], input_shape = [INPUT_X, INPUT_Y, INPUT_Z], activation = tf.nn.relu))
+    model.add(keras.layers.Conv2D(64, kernel_size = [3, 3], activation = tf.nn.relu))
 
     # Add Pooling Layer
-    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.MaxPooling2D(pool_size = [2, 2]))
 
     # Check Dropout Setting
     if (drop_out):
@@ -144,7 +144,7 @@ def build_tf_conv_net(x, y, eps = 10, drop_out = True, drop_rate = 0.2):
     model.add(keras.layers.Flatten())
 
     # Add Dense Layers
-    model.add(keras.layers.Dense(256, activation = tf.nn.relu))
+    model.add(keras.layers.Dense(128, activation = tf.nn.relu))
     model.add(keras.layers.Dense(OUTPUT_SIZE, activation = tf.nn.softmax))
 
     # Initialize Loss Function
