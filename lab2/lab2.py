@@ -71,6 +71,9 @@ elif (DATASET == "cifar_100_c"):
     INPUT_X = 32
     INPUT_Y = 32
     INPUT_Z = 3
+else:
+    # Throw Error Due To Invalid Dataset
+    raise ValueError("dataset not recognized")
 
 # Set Hidden Size
 HIDDEN_SIZE = 512
