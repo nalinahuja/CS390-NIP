@@ -91,7 +91,7 @@ random.seed(SEED_VALUE)
 np.random.seed(SEED_VALUE)
 tf.random.set_seed(SEED_VALUE)
 
-# Tensorflow Settings
+# TensorFlow Settings
 # tf.set_random_seed(SEED_VALUE) # Uncomment for TF1
 # tf.logging.set_verbosity(tf.logging.ERROR) # Uncomment for TF1
 
