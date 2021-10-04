@@ -186,11 +186,11 @@ def encode_preds(preds):
 
 def get_data():
     if (DATASET == "mnist_d"):
-        # Load Data From MNIST Dataset
+        # Load Data From Digit MNIST Dataset
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     elif (DATASET == "mnist_f"):
-        # Load Data From MNIST Dataset
-        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+        # Load Data From Fashion MNIST Dataset
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
     elif (DATASET == "cifar_10"):
         # Load Data From CIFAR10 Dataset
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
@@ -320,22 +320,89 @@ def eval_results(data, y_preds):
     # Unpack Output Test Data
     _, y_test = data
 
+    # Format Test Data
+    y_test = np.argmax(y_test, axis = 1)
+
+    # Format Prediction Data
+    y_preds = np.argmax(y_preds, axis = 1)
+
     # Initialize Accuracy Metric
     accuracy = 0
 
     # Iterate Over Predicted Values
     for i in range(y_preds.shape[0]):
         # Verify Predicted Values Match Expected Values
-        if (np.array_equal(y_test[i], y_preds[i])):
+        if (y_test[i] == y_preds[i]):
             # Increment Accuracy Metric
             accuracy += 1
 
     # Calculate Accuracy
     accuracy /= y_preds.shape[0]
 
+    # Initialize Confusion Matrix Representation
+    cm = np.zeros((OUTPUT_SIZE, OUTPUT_SIZE), dtype = np.int32)
+
+    # Iterate Over Predicted Values
+    for i in range(y_preds.shape[0]):
+        # Update Confusion Matrix
+        cm[y_test[i]][y_preds[i]] += 1
+
+    # Calculate Confusion Matrix Sum
+    cm_sum = np.sum(cm)
+
+    # Initialize F1 Scores Representation
+    f1 = np.zeros(OUTPUT_SIZE)
+
+    # Iterate Over Class Labels
+    for i in range(OUTPUT_SIZE):
+        # Determine True Positives
+        tp = cm[i][i]
+
+        # Determine False Positives
+        fp = sum(cm[i][j] for j in range(OUTPUT_SIZE) if (i != j))
+
+        # Determine False Negatives
+        fn = sum(cm[j][i] for j in range(OUTPUT_SIZE) if (i != j))
+
+        # Calculate F1 Score For Class Label
+        f1[i] = float(tp / (tp + (0.5 * (fp + fn))))
+
     # Display Classifier Metrics
-    print("Classifier algorithm: %s" % ALGORITHM)
+    print("Classifier algorithm: %s" % (ALGORITHM))
     print("Classifier accuracy: %f%%" % (accuracy * 100))
+
+    # Print Confusion Matrix Header
+    print("\nConfusion Matrix:")
+
+    # Print Column Label Padding
+    print(" " * 3, end = "")
+
+    # Print Matrix Column Labels
+    for i in range(OUTPUT_SIZE):
+        print("%3d" % (i), end = " ")
+
+    # Print Separator
+    print("\n" * 1, end = "")
+
+    # Print Labeled Classifier Confusion Matrix
+    for i in range(OUTPUT_SIZE):
+        print(i, cm[i])
+
+    # Print F1 Score Header
+    print("\nF1 Scores:")
+
+    # Print Column Label Padding
+    print(" " * 1, end = "")
+
+    # Print F1 Score Column Labels
+    for i in range(OUTPUT_SIZE):
+        print("%6d" % (i), end = " ")
+
+    # Print Separator
+    print("\n" * 1, end = "")
+
+    # Print F1 Scores
+    print(np.around(f1, decimals = 4))
 
 # End Pipeline Functions------------------------------------------------------------------------------------------------------------------------------------------------
 
