@@ -9,7 +9,7 @@ declare SELF_EXE=$(command basename ${0}) LOC_FOLD="local" GIT_REPO=".git*" VIM_
 # End Defined Constants----------------------------------------------------------------------------------------------------------------------------------------------
 
 # Remote Project Configuration
-declare ssh_addr="ahuja15@moore14.cs.purdue.edu"
+declare ssh_addr="ahuja15@cuda.cs.purdue.edu"
 declare ssh_path="~/Documents/cs390/lab2"
 
 # Local Project Configuration
