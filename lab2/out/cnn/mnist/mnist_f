@@ -1,0 +1,54 @@
+Dataset: mnist_f
+Shape of x_train dataset: (60000, 28, 28)
+Shape of y_train dataset: (60000,)
+Shape of x_test dataset: (10000, 28, 28)
+Shape of y_test dataset: (10000,)
+
+New shape of x_train dataset: (60000, 28, 28, 1)
+New shape of x_test dataset: (10000, 28, 28, 1)
+New shape of y_train dataset: (60000, 10)
+New shape of y_test dataset: (10000, 10)
+
+Training Tensorflow convolutional network...
+Epoch 1/10
+1875/1875 [==============================] - 58s 30ms/step - loss: 0.4374 - accuracy: 0.8413
+Epoch 2/10
+1875/1875 [==============================] - 67s 36ms/step - loss: 0.2968 - accuracy: 0.8926
+Epoch 3/10
+1875/1875 [==============================] - 62s 33ms/step - loss: 0.2573 - accuracy: 0.9070
+Epoch 4/10
+1875/1875 [==============================] - 44s 23ms/step - loss: 0.2313 - accuracy: 0.9165
+Epoch 5/10
+1875/1875 [==============================] - 43s 23ms/step - loss: 0.2058 - accuracy: 0.9257
+Epoch 6/10
+1875/1875 [==============================] - 45s 24ms/step - loss: 0.1885 - accuracy: 0.9307
+Epoch 7/10
+1875/1875 [==============================] - 48s 26ms/step - loss: 0.1708 - accuracy: 0.9369
+Epoch 8/10
+1875/1875 [==============================] - 48s 26ms/step - loss: 0.1538 - accuracy: 0.9440
+Epoch 9/10
+1875/1875 [==============================] - 49s 26ms/step - loss: 0.1452 - accuracy: 0.9468
+Epoch 10/10
+1875/1875 [==============================] - 48s 26ms/step - loss: 0.1316 - accuracy: 0.9522
+
+Running Tensorflow convolutional network...
+
+Classifier algorithm: tf_conv
+Classifier accuracy: 92.110000%
+
+Confusion Matrix:
+     0   1   2   3   4   5   6   7   8   9
+0 [888   1  30  16   1   2  55   0   7   0]
+1 [  0 979   2  16   1   0   1   0   1   0]
+2 [ 11   0 908   7  42   1  31   0   0   0]
+3 [  6   2  13 933  26   0  20   0   0   0]
+4 [  1   0  45  11 885   0  58   0   0   0]
+5 [  0   0   0   0   0 985   0   8   0   7]
+6 [108   2  69  22  60   0 729   0  10   0]
+7 [  0   0   0   0   0  10   0 939   0  51]
+8 [  2   0   4   2   1   2   3   2 983   1]
+9 [  0   0   0   0   0   7   0  11   0 982]
+
+F1 Scores:
+      0      1      2      3      4      5      6      7      8      9
+[0.8810 0.9869 0.8769 0.9297 0.8780 0.9816 0.7686 0.9582 0.9825 0.9623]

@@ -1,0 +1,64 @@
+Dataset: mnist_d
+Shape of x_train dataset: (60000, 28, 28)
+Shape of y_train dataset: (60000,)
+Shape of x_test dataset: (10000, 28, 28)
+Shape of y_test dataset: (10000,)
+
+New shape of x_train dataset: (60000, 784)
+New shape of x_test dataset: (10000, 784)
+New shape of y_train dataset: (60000, 10)
+New shape of y_test dataset: (10000, 10)
+
+Training TensorFlow neural network...
+Epoch 1/15
+1875/1875 [==============================] - 5s 2ms/step - loss: 2.7683 - accuracy: 0.9095
+Epoch 2/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.3685 - accuracy: 0.9355
+Epoch 3/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.3112 - accuracy: 0.9396
+Epoch 4/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.2813 - accuracy: 0.9443
+Epoch 5/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.2670 - accuracy: 0.9470
+Epoch 6/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.2313 - accuracy: 0.9533
+Epoch 7/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.2143 - accuracy: 0.9553
+Epoch 8/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.2168 - accuracy: 0.9579
+Epoch 9/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.1983 - accuracy: 0.9605
+Epoch 10/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.1892 - accuracy: 0.9617
+Epoch 11/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.1837 - accuracy: 0.9637
+Epoch 12/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.1887 - accuracy: 0.9630
+Epoch 13/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.1683 - accuracy: 0.9653
+Epoch 14/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.1688 - accuracy: 0.9676
+Epoch 15/15
+1875/1875 [==============================] - 4s 2ms/step - loss: 0.1734 - accuracy: 0.9677
+
+Running TensorFlow neural network...
+
+Classifier algorithm: tf_net
+Classifier accuracy: 95.730000%
+
+Confusion Matrix:
+     0    1   2   3   4   5   6   7   8   9
+0 [965    1   1   0   1   1   4   2   5   0]
+1 [  0 1107   4   1   1   4   1   6  11   0]
+2 [  6    3 984   1   2   1   2  11  22   0]
+3 [  1    0  13 934   1  11   0   7  35   8]
+4 [  1    1   1   0 944   0   5   5   2  23]
+5 [  4    2   1   9   2 852   5   2  11   4]
+6 [ 10    2   0   0   4   4 930   0   8   0]
+7 [  2    3  13   1   5   0   0 996   1   7]
+8 [  8    1   7   2   5   5   5   3 931   7]
+9 [  7    3   0   5  22   2   0  17  23 930]
+
+F1 Scores:
+      0      1      2      3      4      5      6      7      8      9
+[0.9728 0.9805 0.9572 0.9516 0.9589 0.9616 0.9738 0.9591 0.9204 0.9356]

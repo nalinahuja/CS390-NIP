@@ -1,0 +1,64 @@
+Dataset: cifar_10
+Shape of x_train dataset: (50000, 32, 32, 3)
+Shape of y_train dataset: (50000, 1)
+Shape of x_test dataset: (10000, 32, 32, 3)
+Shape of y_test dataset: (10000, 1)
+
+New shape of x_train dataset: (50000, 3072)
+New shape of x_test dataset: (10000, 3072)
+New shape of y_train dataset: (50000, 10)
+New shape of y_test dataset: (10000, 10)
+
+Training TensorFlow neural network...
+Epoch 1/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 23.2733 - accuracy: 0.1184
+Epoch 2/15
+1563/1563 [==============================] - 7s 5ms/step - loss: 2.3043 - accuracy: 0.0959
+Epoch 3/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.0979
+Epoch 4/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.0990
+Epoch 5/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3170 - accuracy: 0.0983
+Epoch 6/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.0982
+Epoch 7/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.0964
+Epoch 8/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.1001
+Epoch 9/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.0984
+Epoch 10/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.0960
+Epoch 11/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3027 - accuracy: 0.0984
+Epoch 12/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.0992
+Epoch 13/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.0986
+Epoch 14/15
+1563/1563 [==============================] - 8s 5ms/step - loss: 2.3028 - accuracy: 0.0970
+Epoch 15/15
+1563/1563 [==============================] - 9s 5ms/step - loss: 2.3028 - accuracy: 0.0964
+
+Running TensorFlow neural network...
+
+Classifier algorithm: tf_net
+Classifier accuracy: 10.020000%
+
+Confusion Matrix:
+     0   1   2   3   4   5   6   7     8   9
+0 [  0   0   0   0   0   0   0   0  1000   0]
+1 [  0   0   0   0   0   0   0   0  1000   0]
+2 [  0   0   0   0   0   0   0   0  1000   0]
+3 [  0   0   0   0   0   1   0   0   999   0]
+4 [  0   0   0   0   1   0   0   0   999   0]
+5 [  0   0   0   0   0   0   0   0  1000   0]
+6 [  0   0   0   0   0   0   1   0   999   0]
+7 [  0   0   0   0   0   0   0   0  1000   0]
+8 [  0   0   0   0   0   0   0   0  1000   0]
+9 [  0   0   0   0   0   0   0   0  1000   0]
+
+F1 Scores:
+      0      1      2      3      4      5      6      7      8      9
+[0.0000 0.0000 0.0000 0.0000 0.0020 0.0000 0.0020 0.0000 0.1819 0.0000]
