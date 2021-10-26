@@ -58,6 +58,7 @@ tf.random.set_seed(SEED_VALUE)
 # TensorFlow Settings
 # tf.set_random_seed(SEED_VALUE) # Uncomment for TF1
 # tf.logging.set_verbosity(tf.logging.ERROR) # Uncomment for TF1
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 # End Module Imports----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -192,7 +193,7 @@ def style_transfer(c_data, s_data, t_data):
     content_output = content_layer[0, :, :, :]
     content_gen_output = content_layer[2, :, :, :]
 
-    # Add Content Loss
+    # Compute Content Loss
     loss += content_loss(content_layer, content_gen_output)
 
     # Print Status
@@ -200,15 +201,24 @@ def style_transfer(c_data, s_data, t_data):
 
     # Iterate Over Style Layers
     for style_layer_name in (style_layer_names):
-        # Extract Corresponding Style
+        # Extract Corresponding Style Layers
         style_layer = output_dict[style_layer_name]
         style_output = style_layer[1, :, :, :]
         style_gen_output = style_layer[2, :, :, :]
 
-        # Add Style Loss
+        # Compute Style Loss
         loss += style_loss(style_layer, style_gen_output)
 
-    # TODO: Setup gradients or use kb.gradients()
+    sys.exit()
+
+    # Setup Gradients
+    grads = kb.gradients(loss, gen_tensor)
+
+    # Setup Outputs List
+    outputs = [loss, grads]
+
+    # Initialize kFunction
+    kFunction = kb.function([gen_tensor], outputs)
 
     # Print Status
     print("    Beginning Style Transfer")
@@ -229,6 +239,8 @@ def style_transfer(c_data, s_data, t_data):
         save_file = None   #TODO: Implement.
         #imsave(save_file, img)   #Uncomment when everything is working right.
         print("      Image Saved To \"%s\"" % save_file)
+
+    # Print Status
     print("  Style Transfer Complete")
 
 # End Pipeline Functions------------------------------------------------------------------------------------------------------------------------------------------------
