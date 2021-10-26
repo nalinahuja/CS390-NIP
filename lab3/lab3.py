@@ -225,30 +225,36 @@ def style_transfer(c_data, s_data, t_data):
     # Print Status
     print("\n  Beginning Style Transfer")
 
-    # Define Image Data
-    img = None
+    # Define Transfer Image
+    t_img = None
 
     # Perform Style Transfer
     for i in range(TRANSFER_ROUNDS):
         # Print Step Increment
         print("      Step %d" % i)
 
+        # # Initialize Loss Function
+        # loss_function = None?
+        #
+        # # Initialize Image Tensor
+        # image_tensor = None?
+        #
+        # # Initialize Loss Gradient
+        # loss_grad = None?
+
         # Perform Gradient Decent Using fmin_l_bfgs_b
-        x, total_loss, _ = fmin_l_bfgs_b(total_loss?, image_tensor?, fprime = func?, maxiter = GRADIENT_DECENT_ITER)
+        # x, total_loss, _ = fmin_l_bfgs_b(loss_function, image_tensor, fprime = loss_grad, maxiter = GRADIENT_DECENT_ITER)
 
         # Print Total Loss
-        print("        Loss: %f" % total_loss)
+        # print("        Loss: %f" % total_loss)
 
         # Deprocess Image
-        img = deprocess_image(x)
+        # t_img = deprocess_image(x)
 
-        # Print Status
-        print("        Image Saved To \"%s\"" % save_file)
-
-    # Verify Image Data
-    if (not(img is None)):
+    # Verify Transfer Image
+    if (not(t_img is None)):
         # Write Final Image To Disk
-        cv2.imwrite(OUT_IMG_PATH, img)
+        cv2.imwrite(OUT_IMG_PATH, t_img)
 
     # Print Status
     print("\nStyle Transfer Saved To: %s" % OUT_IMG_PATH)
