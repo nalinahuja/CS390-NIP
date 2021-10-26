@@ -26,8 +26,8 @@ CONTENT_IMG_H = 500
 CONTENT_IMG_W = 500
 
 # Style Transfer Weights
-CONTENT_WEIGHT = 0.100    # Alpha weight
-STYLE_WEIGHT = 1.000      # Beta weight
+CONTENT_WEIGHT = 0.100    # Alpha Weight
+STYLE_WEIGHT = 1.000      # Beta Weight
 TOTAL_WEIGHT = 1.000
 
 # Number Of Style Transfers
@@ -95,10 +95,12 @@ def style_loss(style, gen):
     # Return Style Loss
     return (kb.sum(kb.square(gram_matrix(style) - gram_matrix(gen))) / (4.0 * kb.square(style.shape[2]) * kb.square(STYLE_IMG_W * STYLE_IMG_H)))
 
-def total_loss(x):
-    # TODO: Return Total Loss
-    # return ((CONTENT_WEIGHT * content_loss()) + (STYLE_WEIGHT * style_loss()))
-    return (None)
+def total_loss(vec):
+    # Unpack Data Vector
+    content, style, gen = vec
+
+    # Return Total Loss
+    return ((CONTENT_WEIGHT * content_loss(content, gen)) + (STYLE_WEIGHT * style_loss(style, gen)))
 
 # End Loss Functions----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -133,13 +135,8 @@ def preprocess_data(raw):
     # Convert Image Colorspace To RGB
     img = cv.cvtColor(src, cv.COLOR_BGR2RGB)
 
-    # Initalize Warnings Catcher
-    with warnings.catch_warnings():
-        # Ignore Warnings
-        warnings.simplefilter("ignore")
-
-        # Resize Image To Specified Dimensions
-        img = cv.resize(img, dimensions = (ih, iw), interpolation = cv.INTER_CUBIC)
+    # Resize Image To Specified Dimensions
+    img = cv.resize(img, dimensions = (ih, iw), interpolation = cv.INTER_CUBIC)
 
     # Convert Image Data Type
     img = img.astype("float64")
@@ -187,11 +184,12 @@ def style_transfer(c_data, s_data, t_data):
     # Print Status
     print("    Calculating Content Loss")
 
-    #
-    contentLayer = output_dict[content_layer_name]
-    contentOutput = contentLayer[0, :, :, :]
-    genOutput = contentLayer[2, :, :, :]
+    # Extract Corresponding Output Layers
+    content_layer = output_dict[content_layer_name]
+    content_output = content_layer[0, :, :, :]
+    gen_output = content_layer[2, :, :, :]
 
+    # Update Loss
     loss += None   #TODO: implement.
 
     # Print Status
@@ -245,6 +243,6 @@ if (__name__ == "__main__"):
     t_data = preprocess_data(raw[2])
 
     # Apple Style Transfer
-    style_transfer(c_data, s_data, t_data)
+    # style_transfer(c_data, s_data, t_data)
 
 # End Main Function-----------------------------------------------------------------------------------------------------------------------------------------------------

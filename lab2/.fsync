@@ -19,9 +19,6 @@ declare pwd_fold=$(command basename ${loc_path})
 # End Global Variables-----------------------------------------------------------------------------------------------------------------------------------------------
 
 function synchronize() {
-  # Display Prompt
-  command echo -e "${CR}atom: Synchronizing local (./${pwd_fold%/}) with remote (${ssh_path%/})"
-
   # Initialize Paths
   local src="${loc_path%/}/" dst="${ssh_addr}:${ssh_path%/}/"
 
@@ -57,7 +54,7 @@ then
 fi
 
 # Display Prompt
-command echo -en "atom: Configuring workspace at remote (${ssh_path%/})"
+command echo -en "atom: Configuring workspace at remote (${ssh_path%/}) "
 
 # Open Atom Editor
 command atom "${loc_path}"
@@ -67,6 +64,9 @@ while [[ -z $(command pgrep -f "atom") ]]; do
   # Sleep For A Bit
   command sleep ${SYNC_DELAY}
 done
+
+# Display Prompt
+command echo -e "${CR}atom: Synchronizing local (./${pwd_fold%/}) with remote (${ssh_path%/}) "
 
 # Run File Syncronizer
 synchronize &
