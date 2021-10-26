@@ -130,9 +130,6 @@ def get_data():
     # Load Style Image
     s_img = load_img(STYLE_IMG_PATH)
 
-    # Print Status
-    print("  Images Loaded")
-
     # Return Image Data
     return ((c_img, CONTENT_IMG_H, CONTENT_IMG_W), (s_img, STYLE_IMG_H, STYLE_IMG_W), (t_img, CONTENT_IMG_H, CONTENT_IMG_W))
 
@@ -226,9 +223,9 @@ def style_transfer(c_data, s_data, t_data):
     kf = kb.function([gen_tensor], outputs)
 
     # Print Status
-    print("    Beginning Style Transfer")
+    print("\n  Beginning Style Transfer")
 
-    # Define Image
+    # Define Image Data
     img = None
 
     # Perform Style Transfer
@@ -236,9 +233,8 @@ def style_transfer(c_data, s_data, t_data):
         # Print Step Increment
         print("      Step %d" % i)
 
-        total_loss = 0
         # Perform Gradient Decent Using fmin_l_bfgs_b
-        # x, total_loss, _ = fmin_l_bfgs_b(total_loss?, image_tensor?, fprime = func?, maxiter = GRADIENT_DECENT_ITER)
+        x, total_loss, _ = fmin_l_bfgs_b(total_loss?, image_tensor?, fprime = func?, maxiter = GRADIENT_DECENT_ITER)
 
         # Print Total Loss
         print("        Loss: %f" % total_loss)
@@ -249,17 +245,19 @@ def style_transfer(c_data, s_data, t_data):
         # Print Status
         print("        Image Saved To \"%s\"" % save_file)
 
-    # Write Final Image To Disk
-    cv2.imwrite(OUT_IMG_PATH, img)
+    # Verify Image Data
+    if (not(img is None)):
+        # Write Final Image To Disk
+        cv2.imwrite(OUT_IMG_PATH, img)
 
     # Print Status
-    print("  Style Transfer Complete")
+    print("\nStyle Transfer Saved To: %s" % OUT_IMG_PATH)
 
 # End Pipeline Functions------------------------------------------------------------------------------------------------------------------------------------------------
 
 if (__name__ == "__main__"):
     # Print Status
-    print("Starting Style Transfer Program...")
+    print("Starting Style Transfer Program\n")
 
     # Get Data
     raw = get_data()
