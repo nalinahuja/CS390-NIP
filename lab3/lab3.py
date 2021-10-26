@@ -28,6 +28,9 @@ STYLE_IMG_PATH = os.path.join(MEDIA_PATH, "style/red.jpg")
 STYLE_IMG_W = 500
 STYLE_IMG_H = 500
 
+# Style Image File Path
+OUT_IMG_PATH = os.path.join(MEDIA_PATH, "john_red.jpg")
+
 # Style Transfer Weights
 CONTENT_WEIGHT = 0.100    # Alpha Weight
 STYLE_WEIGHT = 1.000      # Beta Weight
@@ -35,6 +38,9 @@ TOTAL_WEIGHT = 1.000
 
 # Number Of Style Transfers
 TRANSFER_ROUNDS = 3
+
+# Gradient Decent Iterations
+GRADIENT_DECENT_ITER = 1000
 
 # End Embedded Constants------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -216,19 +222,23 @@ def style_transfer(c_data, s_data, t_data):
     # Setup Outputs List
     outputs = [loss, grads]
 
-    # Initialize kFunction
-    kFunction = kb.function([gen_tensor], outputs)
+    # Initialize Loss Function
+    kf = kb.function([gen_tensor], outputs)
 
     # Print Status
     print("    Beginning Style Transfer")
+
+    # Define Image
+    img = None
 
     # Perform Style Transfer
     for i in range(TRANSFER_ROUNDS):
         # Print Step Increment
         print("      Step %d" % i)
 
+        total_loss = 0
         # Perform Gradient Decent Using fmin_l_bfgs_b
-        x, total_loss, _ = fmin_l_bfgs_b(loss_func, image_tensor, fprime = None, maxiter = 1000)
+        # x, total_loss, _ = fmin_l_bfgs_b(total_loss?, image_tensor?, fprime = func?, maxiter = GRADIENT_DECENT_ITER)
 
         # Print Total Loss
         print("        Loss: %f" % total_loss)
@@ -236,11 +246,11 @@ def style_transfer(c_data, s_data, t_data):
         # Deprocess Image
         img = deprocess_image(x)
 
-        # Write Image To Disk
-        cv2.imwrite(OUT_IMG_PATH, img)
-
         # Print Status
         print("        Image Saved To \"%s\"" % save_file)
+
+    # Write Final Image To Disk
+    cv2.imwrite(OUT_IMG_PATH, img)
 
     # Print Status
     print("  Style Transfer Complete")
