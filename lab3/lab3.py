@@ -11,15 +11,18 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 # Random Seed Value
 SEED_VALUE = 1618
 
+# Media Path
+MEDIA_PATH = "./media"
+
 # Style Image File Path
-STYLE_IMG_PATH = ""
+STYLE_IMG_PATH = os.path.join(MEDIA_PATH, "style")
 
 # Style Image Dimensions
 STYLE_IMG_H = 500
 STYLE_IMG_W = 500
 
 # Content Image File Path
-CONTENT_IMG_PATH = ""
+CONTENT_IMG_PATH = os.path.join(MEDIA_PATH, "content")
 
 # Content Image Dimensions
 CONTENT_IMG_H = 500
@@ -58,18 +61,6 @@ tf.random.set_seed(SEED_VALUE)
 
 # End Module Imports----------------------------------------------------------------------------------------------------------------------------------------------------
 
-def deprocess_image(img):
-    # Reshape Image Matrix
-    img = img.reshape((STYLE_IMG_H, STYLE_IMG_W, 3))
-
-    # Process Zero-Center By Mean Pixel
-    img2[:, :, 0] += 103.939
-    img2[:, :, 1] += 116.779
-    img2[:, :, 2] += 123.680
-
-    # Limit Array Values To
-    return (np.clip(x, 0, 255).astype("uint8"))
-
 def gram_matrix(x):
     # Check Image Data Format
     if (kb.image_data_format() == "channels_first"):
@@ -84,6 +75,18 @@ def gram_matrix(x):
 
     # Return Gram Matrix
     return (gram)
+
+def deprocess_image(img):
+    # Reshape Image Matrix
+    img = img.reshape((STYLE_IMG_H, STYLE_IMG_W, 3))
+
+    # Process Zero-Center By Mean Pixel
+    img2[:, :, 0] += 103.939
+    img2[:, :, 1] += 116.779
+    img2[:, :, 2] += 123.680
+
+    # Limit Array Values To Range
+    return (np.clip(x, 0, 255).astype("uint8"))
 
 # End Helper Functions--------------------------------------------------------------------------------------------------------------------------------------------------
 
