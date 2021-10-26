@@ -18,15 +18,15 @@ MEDIA_PATH = "./media"
 CONTENT_IMG_PATH = os.path.join(MEDIA_PATH, "content/john.jpg")
 
 # Content Image Dimensions
-CONTENT_IMG_H = 500
 CONTENT_IMG_W = 500
+CONTENT_IMG_H = 500
 
 # Style Image File Path
 STYLE_IMG_PATH = os.path.join(MEDIA_PATH, "style/red.jpg")
 
 # Style Image Dimensions
-STYLE_IMG_H = 500
 STYLE_IMG_W = 500
+STYLE_IMG_H = 500
 
 # Style Transfer Weights
 CONTENT_WEIGHT = 0.100    # Alpha Weight
@@ -58,6 +58,7 @@ tf.random.set_seed(SEED_VALUE)
 # TensorFlow Settings
 # tf.set_random_seed(SEED_VALUE) # Uncomment for TF1
 # tf.logging.set_verbosity(tf.logging.ERROR) # Uncomment for TF1
+tf.compat.v1.disable_eager_execution()
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 # End Module Imports----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -194,7 +195,7 @@ def style_transfer(c_data, s_data, t_data):
     content_gen_output = content_layer[2, :, :, :]
 
     # Compute Content Loss
-    loss += CONTENT_WEIGHT * content_loss(content_layer, content_gen_output)
+    loss += CONTENT_WEIGHT * content_loss(content_output, content_gen_output)
 
     # Print Status
     print("    Calculating Style Loss")
@@ -207,7 +208,7 @@ def style_transfer(c_data, s_data, t_data):
         style_gen_output = style_layer[2, :, :, :]
 
         # Compute Style Loss
-        loss += STYLE_WEIGHT * style_loss(style_layer, style_gen_output)
+        loss += STYLE_WEIGHT * style_loss(style_output, style_gen_output)
 
     # Setup Gradients
     grads = kb.gradients(loss, gen_tensor)
@@ -223,23 +224,20 @@ def style_transfer(c_data, s_data, t_data):
 
     # Perform Style Transfer
     for i in range(TRANSFER_ROUNDS):
-        # Print Status
+        # Print Step Increment
         print("      Step %d" % i)
 
+        # Perform Gradient Decent Using fmin_l_bfgs_b
+        x, total_loss, _ = fmin_l_bfgs_b(loss_func, image_tensor, fprime = None, maxiter = 1000)
 
-
-        #TODO: perform gradient descent using fmin_l_bfgs_b.
-
-        print("        Loss: %f" % tLoss)
+        # Print Total Loss
+        print("        Loss: %f" % total_loss)
 
         # Deprocess Image
         img = deprocess_image(x)
 
-        # TODO: Save File To Disk
-        save_file = None
-
-        # Uncomment when everything is working right.
-        # imsave(save_file, img)
+        # Write Image To Disk
+        cv2.imwrite(OUT_IMG_PATH, img)
 
         # Print Status
         print("        Image Saved To \"%s\"" % save_file)
