@@ -29,7 +29,7 @@ STYLE_IMG_W = 500
 STYLE_IMG_H = 500
 
 # Style Image File Path
-OUT_IMG_PATH = os.path.join(MEDIA_PATH, "john_red.jpg")
+OUT_IMG_PATH = os.path.join(MEDIA_PATH, "red_john.jpg")
 
 # Style Transfer Weights
 CONTENT_WEIGHT = 0.100    # Alpha Weight
@@ -233,23 +233,23 @@ def style_transfer(c_data, s_data, t_data):
         # Print Step Increment
         print("      Step %d" % i)
 
-        # # Initialize Loss Function
-        # loss_function = None?
-        #
-        # # Initialize Image Tensor
-        # image_tensor = None?
-        #
-        # # Initialize Loss Gradient
-        # loss_grad = None?
+        # Initialize Loss Function
+        loss_function = None?
 
-        # Perform Gradient Decent Using fmin_l_bfgs_b
-        # x, total_loss, _ = fmin_l_bfgs_b(loss_function, image_tensor, fprime = loss_grad, maxiter = GRADIENT_DECENT_ITER)
+        # Initialize Image Tensor
+        image_tensor = None?
 
-        # Print Total Loss
-        # print("        Loss: %f" % total_loss)
+        # Initialize Loss Gradient
+        loss_grad = None?
 
-        # Deprocess Image
-        # t_img = deprocess_image(x)
+        Perform Gradient Decent Using fmin_l_bfgs_b
+        x, total_loss, _ = fmin_l_bfgs_b(loss_function, image_tensor, fprime = loss_grad, maxiter = GRADIENT_DECENT_ITER)
+
+        Print Total Loss
+        print("        Loss: %f" % total_loss)
+
+        Deprocess Image
+        t_img = deprocess_image(x)
 
     # Verify Transfer Image
     if (not(t_img is None)):
@@ -257,7 +257,7 @@ def style_transfer(c_data, s_data, t_data):
         cv2.imwrite(OUT_IMG_PATH, t_img)
 
     # Print Status
-    print("\nStyle Transfer Saved To: %s" % OUT_IMG_PATH)
+    print("\nStyle Transfer Saved To \"%s\"" % OUT_IMG_PATH)
 
 # End Pipeline Functions------------------------------------------------------------------------------------------------------------------------------------------------
 
