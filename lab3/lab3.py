@@ -97,7 +97,7 @@ def content_loss(content, gen):
 
 def style_loss(style, gen):
     # Return Style Loss
-    return (kb.sum(kb.square(gram_matrix(style) - gram_matrix(gen))) / (4.0 * kb.square(style.shape[2]) * kb.square(STYLE_IMG_W * STYLE_IMG_H)))
+    return (kb.sum(kb.square(gram_matrix(style) - gram_matrix(gen))) / (4.0 * np.square(style.shape[2]) * np.square(STYLE_IMG_W * STYLE_IMG_H)))
 
 def total_loss(vec):
     # Unpack Data Vector
@@ -111,8 +111,8 @@ def total_loss(vec):
 def get_data():
     # Print Status
     print("  Loading Images")
-    print("    Style Image Path:   \"%s\"" % STYLE_IMG_PATH)
     print("    Content Image Path: \"%s\"" % CONTENT_IMG_PATH)
+    print("    Style Image Path:   \"%s\"" % STYLE_IMG_PATH)
 
     # Load Content Image
     c_img = load_img(CONTENT_IMG_PATH)
@@ -140,7 +140,7 @@ def preprocess_data(raw):
     img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
     # Resize Image To Specified Dimensions
-    img = cv.resize(img, dsize = (ih, iw), interpolation = cv.INTER_CUBIC)
+    img = cv.resize(img, dsize = (iw, ih), interpolation = cv.INTER_CUBIC)
 
     # Convert Image Data Type
     img = img.astype("float64")
@@ -174,7 +174,7 @@ def style_transfer(c_data, s_data, t_data):
     model = vgg19.VGG19(include_top = False, weights = "imagenet", input_tensor = input_tensor)
 
     # Extract Layer Data From Model
-    output_dict = dict([(layer.name, layer.output) for layer in model.layers])
+    output_dict = dict([(layer.name, layer.output) for layer in (model.layers)])
 
     # Print Status
     print("    VGG19 Model Loaded")
@@ -194,7 +194,7 @@ def style_transfer(c_data, s_data, t_data):
     content_gen_output = content_layer[2, :, :, :]
 
     # Compute Content Loss
-    loss += content_loss(content_layer, content_gen_output)
+    loss += CONTENT_WEIGHT * content_loss(content_layer, content_gen_output)
 
     # Print Status
     print("    Calculating Style Loss")
@@ -207,9 +207,7 @@ def style_transfer(c_data, s_data, t_data):
         style_gen_output = style_layer[2, :, :, :]
 
         # Compute Style Loss
-        loss += style_loss(style_layer, style_gen_output)
-
-    sys.exit()
+        loss += STYLE_WEIGHT * style_loss(style_layer, style_gen_output)
 
     # Setup Gradients
     grads = kb.gradients(loss, gen_tensor)
@@ -228,6 +226,8 @@ def style_transfer(c_data, s_data, t_data):
         # Print Status
         print("      Step %d" % i)
 
+
+
         #TODO: perform gradient descent using fmin_l_bfgs_b.
 
         print("        Loss: %f" % tLoss)
@@ -235,10 +235,14 @@ def style_transfer(c_data, s_data, t_data):
         # Deprocess Image
         img = deprocess_image(x)
 
-        # Save File To Disk
-        save_file = None   #TODO: Implement.
-        #imsave(save_file, img)   #Uncomment when everything is working right.
-        print("      Image Saved To \"%s\"" % save_file)
+        # TODO: Save File To Disk
+        save_file = None
+
+        # Uncomment when everything is working right.
+        # imsave(save_file, img)
+
+        # Print Status
+        print("        Image Saved To \"%s\"" % save_file)
 
     # Print Status
     print("  Style Transfer Complete")
