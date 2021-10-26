@@ -187,22 +187,26 @@ def style_transfer(c_data, s_data, t_data):
     # Print Status
     print("    Calculating Content Loss")
 
-    # Extract Corresponding Output Layers
+    # Extract Corresponding Content Layers
     content_layer = output_dict[content_layer_name]
     content_output = content_layer[0, :, :, :]
-    gen_output = content_layer[2, :, :, :]
+    content_gen_output = content_layer[2, :, :, :]
 
-    # Update Loss
-    loss += None   #TODO: implement.
+    # Add Content Loss
+    loss += content_loss(content_layer, content_gen_output)
 
     # Print Status
     print("    Calculating Style Loss")
 
     # Iterate Over Style Layers
-    for layerName in (style_layer_names):
-        loss += None   #TODO: implement.
+    for style_layer_name in (style_layer_names):
+        # Extract Corresponding Style
+        style_layer = output_dict[style_layer_name]
+        style_output = style_layer[1, :, :, :]
+        style_gen_output = style_layer[2, :, :, :]
 
-    loss += None   #TODO: implement.
+        # Add Style Loss
+        loss += style_loss(style_layer, style_gen_output)
 
     # TODO: Setup gradients or use kb.gradients()
 
