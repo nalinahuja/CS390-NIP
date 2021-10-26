@@ -14,19 +14,19 @@ SEED_VALUE = 1618
 # Media Path
 MEDIA_PATH = "./media"
 
-# Style Image File Path
-STYLE_IMG_PATH = os.path.join(MEDIA_PATH, "style")
-
-# Style Image Dimensions
-STYLE_IMG_H = 500
-STYLE_IMG_W = 500
-
 # Content Image File Path
-CONTENT_IMG_PATH = os.path.join(MEDIA_PATH, "content")
+CONTENT_IMG_PATH = os.path.join(MEDIA_PATH, "content/john.jpg")
 
 # Content Image Dimensions
 CONTENT_IMG_H = 500
 CONTENT_IMG_W = 500
+
+# Style Image File Path
+STYLE_IMG_PATH = os.path.join(MEDIA_PATH, "style/red.jpg")
+
+# Style Image Dimensions
+STYLE_IMG_H = 500
+STYLE_IMG_W = 500
 
 # Style Transfer Weights
 CONTENT_WEIGHT = 0.100    # Alpha Weight
@@ -109,9 +109,9 @@ def total_loss(vec):
 
 def get_data():
     # Print Status
-    print("\n  Loading images:")
-    print("    Content image URL: \"%s\"" % CONTENT_IMG_PATH)
-    print("    Style image URL:   \"%s\"" % STYLE_IMG_PATH)
+    print("  Loading Images")
+    print("    Style Image Path:   \"%s\"" % STYLE_IMG_PATH)
+    print("    Content Image Path: \"%s\"" % CONTENT_IMG_PATH)
 
     # Load Content Image
     c_img = load_img(CONTENT_IMG_PATH)
@@ -123,7 +123,7 @@ def get_data():
     s_img = load_img(STYLE_IMG_PATH)
 
     # Print Status
-    print("  Images have been loaded")
+    print("  Images Loaded")
 
     # Return Image Data
     return ((c_img, CONTENT_IMG_H, CONTENT_IMG_W), (s_img, STYLE_IMG_H, STYLE_IMG_W), (t_img, CONTENT_IMG_H, CONTENT_IMG_W))
@@ -136,10 +136,10 @@ def preprocess_data(raw):
     img = img_to_array(img)
 
     # Convert Image Colorspace To RGB
-    img = cv.cvtColor(src, cv.COLOR_BGR2RGB)
+    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
     # Resize Image To Specified Dimensions
-    img = cv.resize(img, dimensions = (ih, iw), interpolation = cv.INTER_CUBIC)
+    img = cv.resize(img, dsize = (ih, iw), interpolation = cv.INTER_CUBIC)
 
     # Convert Image Data Type
     img = img.astype("float64")
@@ -231,7 +231,7 @@ def style_transfer(c_data, s_data, t_data):
 
 if (__name__ == "__main__"):
     # Print Status
-    print("Starting Style Transfer Program")
+    print("Starting Style Transfer Program...")
 
     # Get Data
     raw = get_data()
@@ -246,6 +246,6 @@ if (__name__ == "__main__"):
     t_data = preprocess_data(raw[2])
 
     # Apple Style Transfer
-    # style_transfer(c_data, s_data, t_data)
+    style_transfer(c_data, s_data, t_data)
 
 # End Main Function-----------------------------------------------------------------------------------------------------------------------------------------------------
