@@ -11,25 +11,22 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 # Random Seed Value
 SEED_VALUE = 1618
 
-# Media Path
-MEDIA_PATH = "./media"
+# Media Directory
+MEDIA_DIR = "./media"
 
 # Content Image File Path
-CONTENT_IMG_PATH = os.path.join(MEDIA_PATH, "content/john.jpg")
+CONTENT_IMG_PATH = os.path.join(MEDIA_DIR, "contents/john.jpg")
 
 # Content Image Dimensions
 CONTENT_IMG_W = 500
 CONTENT_IMG_H = 500
 
 # Style Image File Path
-STYLE_IMG_PATH = os.path.join(MEDIA_PATH, "style/red.jpg")
+STYLE_IMG_PATH = os.path.join(MEDIA_DIR, "styles/stars.jpg")
 
 # Style Image Dimensions
 STYLE_IMG_W = 500
 STYLE_IMG_H = 500
-
-# Style Image File Path
-OUT_IMG_PATH = os.path.join(MEDIA_PATH, "red_john.jpg")
 
 # Style Transfer Weights
 CONTENT_WEIGHT = 0.100    # Alpha Weight
@@ -40,12 +37,11 @@ TOTAL_WEIGHT = 1.000
 TRANSFER_ROUNDS = 3
 
 # Gradient Decent Iterations
-GRADIENT_DECENT_ITER = 1000
+GRADIENT_DECENT_ITER = 10000
 
 # End Embedded Constants------------------------------------------------------------------------------------------------------------------------------------------------
 
 import random
-import warnings
 import cv2 as cv
 import numpy as np
 import tensorflow as tf
@@ -69,6 +65,24 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 # End Module Imports----------------------------------------------------------------------------------------------------------------------------------------------------
 
+def deprocess_image(img):
+    # Copy Image Representation
+    img = img.copy()
+
+    # Reshape Deprocessed Image
+    img = img.reshape((STYLE_IMG_H, STYLE_IMG_W, 3))
+
+    # Process Zero-Center By Mean Pixel
+    img[:, :, 0] += 103.939
+    img[:, :, 1] += 116.779
+    img[:, :, 2] += 123.680
+
+    # Convert Image Colorspace To RGB
+    img = img[:, :, ::-1]
+
+    # Limit Array Values To Range
+    return (np.clip(img, 0, 255).astype("uint8"))
+
 def gram_matrix(x):
     # Check Image Data Format
     if (kb.image_data_format() == "channels_first"):
@@ -84,18 +98,6 @@ def gram_matrix(x):
     # Return Gram Matrix
     return (gram)
 
-def deprocess_image(img):
-    # Reshape Image Matrix
-    img = img.reshape((STYLE_IMG_H, STYLE_IMG_W, 3))
-
-    # Process Zero-Center By Mean Pixel
-    img2[:, :, 0] += 103.939
-    img2[:, :, 1] += 116.779
-    img2[:, :, 2] += 123.680
-
-    # Limit Array Values To Range
-    return (np.clip(x, 0, 255).astype("uint8"))
-
 # End Helper Functions--------------------------------------------------------------------------------------------------------------------------------------------------
 
 def content_loss(content, gen):
@@ -104,16 +106,11 @@ def content_loss(content, gen):
 
 def style_loss(style, gen):
     # Return Style Loss
-    return (kb.sum(kb.square(gram_matrix(style) - gram_matrix(gen))) / (4.0 * np.square(style.shape[2]) * np.square(STYLE_IMG_W * STYLE_IMG_H)))
-
-def total_loss(vec):
-    # Unpack Data Vector
-    content, style, gen = vec
-
-    # Return Total Loss
-    return ((CONTENT_WEIGHT * content_loss(content, gen)) + (STYLE_WEIGHT * style_loss(style, gen)))
+    return (kb.sum(kb.square(gram_matrix(style) - gram_matrix(gen))) / (4.0 * np.square(style.shape[2]) * np.square(STYLE_IMG_H * STYLE_IMG_W)))
 
 # End Loss Functions----------------------------------------------------------------------------------------------------------------------------------------------------
+
+# End Gradient Decent Functions-----------------------------------------------------------------------------------------------------------------------------------------
 
 def get_data():
     # Print Status
@@ -140,14 +137,11 @@ def preprocess_data(raw):
     # Convert Image To Numpy Array
     img = img_to_array(img)
 
-    # Convert Image Colorspace To RGB
-    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-
-    # Resize Image To Specified Dimensions
-    img = cv.resize(img, dsize = (iw, ih), interpolation = cv.INTER_CUBIC)
-
     # Convert Image Data Type
     img = img.astype("float64")
+
+    # Resize Image To Specified Dimensions
+    img = cv.resize(img, dsize = (iw, ih))
 
     # Add Dimension To Numpy Array
     img = np.expand_dims(img, axis = 0)
@@ -155,7 +149,7 @@ def preprocess_data(raw):
     # Preprocess Image Through VGG19
     img = vgg19.preprocess_input(img)
 
-    # Return Image
+    # Return Image Data
     return (img)
 
 def style_transfer(c_data, s_data, t_data):
@@ -168,7 +162,7 @@ def style_transfer(c_data, s_data, t_data):
     # Create Style Tensor
     style_tensor = kb.variable(s_data)
 
-    # Create Generator Tensor
+    # Create Placeholder Generator Tensor
     gen_tensor = kb.placeholder((1, CONTENT_IMG_H, CONTENT_IMG_W, 3))
 
     # Create Input Tensor From Previous Tensors
@@ -222,42 +216,56 @@ def style_transfer(c_data, s_data, t_data):
     # Initialize Loss Function
     kf = kb.function([gen_tensor], outputs)
 
+    # Initialize Loss Function
+    def loss_func(x):
+        # Reshape Input To Generator Tensor Dimensions
+        x = x.reshape((1, STYLE_IMG_H, STYLE_IMG_W, 3))
+
+        # Get Loss
+        loss, _ = kf([x])
+
+        # Return Loss
+        return (loss.flatten())
+
+    # Initialize Gradient Function
+    def grad_func(x):
+        # Reshape Input To Generator Tensor Dimensions
+        x = x.reshape((1, STYLE_IMG_H, STYLE_IMG_W, 3))
+
+        # Get Gradient
+        _, grad = kf([x])
+
+        # Return Gradient
+        return (grad.flatten())
+
     # Print Status
     print("\n  Beginning Style Transfer")
 
-    # Define Transfer Image
-    t_img = None
+    # Create Transfers Directory
+    os.mkdir(TRANSFER_DIR)
 
     # Perform Style Transfer
-    for i in range(TRANSFER_ROUNDS):
+    for i in range(1, TRANSFER_ROUNDS + 1):
         # Print Step Increment
         print("      Step %d" % i)
 
-        # Initialize Loss Function
-        loss_function = None?
+        # Perform Gradient Decent Using fmin_l_bfgs_b
+        t_data, t_loss, _ = fmin_l_bfgs_b(loss_func, t_data.flatten(), grad_func, maxfun = 30, maxiter = GRADIENT_DECENT_ITER)
 
-        # Initialize Image Tensor
-        image_tensor = None?
+        # Print Total Loss
+        print("        Loss: %f" % t_loss)
 
-        # Initialize Loss Gradient
-        loss_grad = None?
+        # Deprocess Image
+        t_img = deprocess_image(t_data)
 
-        Perform Gradient Decent Using fmin_l_bfgs_b
-        x, total_loss, _ = fmin_l_bfgs_b(loss_function, image_tensor, fprime = loss_grad, maxiter = GRADIENT_DECENT_ITER)
+        # Convert Array Into Image
+        t_img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
-        Print Total Loss
-        print("        Loss: %f" % total_loss)
+        # Save Image To Disk
+        cv2.imwrite(os.path.join(MEDIA_DIR, f"st_{i}.jpg"), t_img)
 
-        Deprocess Image
-        t_img = deprocess_image(x)
-
-    # Verify Transfer Image
-    if (not(t_img is None)):
-        # Write Final Image To Disk
-        cv2.imwrite(OUT_IMG_PATH, t_img)
-
-    # Print Status
-    print("\nStyle Transfer Saved To \"%s\"" % OUT_IMG_PATH)
+        # Print Status
+        print("\nTransfer Image Saved To \"%s\"" % OUT_IMG_PATH)
 
 # End Pipeline Functions------------------------------------------------------------------------------------------------------------------------------------------------
 
