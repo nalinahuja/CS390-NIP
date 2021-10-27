@@ -15,14 +15,14 @@ SEED_VALUE = 1618
 MEDIA_DIR = "./media"
 
 # Content Image File Path
-CONTENT_IMG_PATH = os.path.join(MEDIA_DIR, "content/sakura.jpg")
+CONTENT_IMG_PATH = os.path.join(MEDIA_DIR, "content/flowers.jpg")
 
 # Content Image Dimensions
 CONTENT_IMG_W = 500
 CONTENT_IMG_H = 500
 
 # Style Image File Path
-STYLE_IMG_PATH = os.path.join(MEDIA_DIR, "style/fluid.jpg")
+STYLE_IMG_PATH = os.path.join(MEDIA_DIR, "style/red.jpg")
 
 # Style Image Dimensions
 STYLE_IMG_W = 500
