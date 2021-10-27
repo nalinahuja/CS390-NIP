@@ -15,14 +15,14 @@ SEED_VALUE = 1618
 MEDIA_DIR = "./media"
 
 # Content Image File Path
-CONTENT_IMG_PATH = os.path.join(MEDIA_DIR, "content/john.jpg")
+CONTENT_IMG_PATH = os.path.join(MEDIA_DIR, "content/sakura.jpg")
 
 # Content Image Dimensions
 CONTENT_IMG_W = 500
 CONTENT_IMG_H = 500
 
 # Style Image File Path
-STYLE_IMG_PATH = os.path.join(MEDIA_DIR, "style/stars.jpg")
+STYLE_IMG_PATH = os.path.join(MEDIA_DIR, "style/fluid.jpg")
 
 # Style Image Dimensions
 STYLE_IMG_W = 500
@@ -37,7 +37,7 @@ TOTAL_WEIGHT = 1.000
 STYLE_TRANSFER_ROUNDS = 3
 
 # Gradient Decent Values
-GRADIENT_DECENT_FUNC = 30
+GRADIENT_DECENT_FUNC = 25
 GRADIENT_DECENT_ITER = 1000
 
 # End Embedded Constants------------------------------------------------------------------------------------------------------------------------------------------------
@@ -224,7 +224,7 @@ def style_transfer(c_data, s_data, t_data):
         loss, _ = kf([x])
 
         # Return Loss
-        return (np.array(loss))
+        return (np.array(loss).flatten().astype("float64"))
 
     # Initialize Gradient Function
     def grad_func(x):
@@ -235,7 +235,7 @@ def style_transfer(c_data, s_data, t_data):
         _, grad = kf([x])
 
         # Return Gradient
-        return (np.array(grad).flatten().astype('float64'))
+        return (np.array(grad).flatten().astype("float64"))
 
     # Print Status
     print("\n  Beginning Style Transfer")
