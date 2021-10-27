@@ -15,29 +15,30 @@ SEED_VALUE = 1618
 MEDIA_DIR = "./media"
 
 # Content Image File Path
-CONTENT_IMG_PATH = os.path.join(MEDIA_DIR, "contents/john.jpg")
+CONTENT_IMG_PATH = os.path.join(MEDIA_DIR, "content/john.jpg")
 
 # Content Image Dimensions
 CONTENT_IMG_W = 500
 CONTENT_IMG_H = 500
 
 # Style Image File Path
-STYLE_IMG_PATH = os.path.join(MEDIA_DIR, "styles/stars.jpg")
+STYLE_IMG_PATH = os.path.join(MEDIA_DIR, "style/stars.jpg")
 
 # Style Image Dimensions
 STYLE_IMG_W = 500
 STYLE_IMG_H = 500
 
 # Style Transfer Weights
-CONTENT_WEIGHT = 0.100    # Alpha Weight
-STYLE_WEIGHT = 1.000      # Beta Weight
+CONTENT_WEIGHT = 0.300    # Alpha Weight
+STYLE_WEIGHT = 100.0      # Beta Weight
 TOTAL_WEIGHT = 1.000
 
 # Number Of Style Transfers
-TRANSFER_ROUNDS = 3
+STYLE_TRANSFER_ROUNDS = 3
 
-# Gradient Decent Iterations
-GRADIENT_DECENT_ITER = 10000
+# Gradient Decent Values
+GRADIENT_DECENT_FUNC = 30
+GRADIENT_DECENT_ITER = 1000
 
 # End Embedded Constants------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -109,8 +110,6 @@ def style_loss(style, gen):
     return (kb.sum(kb.square(gram_matrix(style) - gram_matrix(gen))) / (4.0 * np.square(style.shape[2]) * np.square(STYLE_IMG_H * STYLE_IMG_W)))
 
 # End Loss Functions----------------------------------------------------------------------------------------------------------------------------------------------------
-
-# End Gradient Decent Functions-----------------------------------------------------------------------------------------------------------------------------------------
 
 def get_data():
     # Print Status
@@ -225,7 +224,7 @@ def style_transfer(c_data, s_data, t_data):
         loss, _ = kf([x])
 
         # Return Loss
-        return (loss.flatten())
+        return (np.array(loss))
 
     # Initialize Gradient Function
     def grad_func(x):
@@ -236,36 +235,36 @@ def style_transfer(c_data, s_data, t_data):
         _, grad = kf([x])
 
         # Return Gradient
-        return (grad.flatten())
+        return (np.array(grad).flatten().astype('float64'))
 
     # Print Status
     print("\n  Beginning Style Transfer")
 
-    # Create Transfers Directory
-    os.mkdir(TRANSFER_DIR)
-
     # Perform Style Transfer
-    for i in range(1, TRANSFER_ROUNDS + 1):
+    for i in range(1, STYLE_TRANSFER_ROUNDS + 1):
         # Print Step Increment
-        print("      Step %d" % i)
+        print("    Step %d" % i)
 
         # Perform Gradient Decent Using fmin_l_bfgs_b
-        t_data, t_loss, _ = fmin_l_bfgs_b(loss_func, t_data.flatten(), grad_func, maxfun = 30, maxiter = GRADIENT_DECENT_ITER)
+        t_data, t_loss, _ = fmin_l_bfgs_b(loss_func, t_data.flatten(), grad_func, maxfun = GRADIENT_DECENT_FUNC, maxiter = GRADIENT_DECENT_ITER)
 
         # Print Total Loss
-        print("        Loss: %f" % t_loss)
+        print("      Loss: %f" % t_loss)
 
         # Deprocess Image
         t_img = deprocess_image(t_data)
 
         # Convert Array Into Image
-        t_img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+        t_img = cv.cvtColor(t_img, cv.COLOR_BGR2RGB)
+
+        # Create Saved Image File Path
+        save_file = os.path.join(MEDIA_DIR, f"st_{i}.jpg")
 
         # Save Image To Disk
-        cv2.imwrite(os.path.join(MEDIA_DIR, f"st_{i}.jpg"), t_img)
+        cv.imwrite(save_file, t_img)
 
         # Print Status
-        print("\nTransfer Image Saved To \"%s\"" % OUT_IMG_PATH)
+        print("      Image Path: \"%s\"\n" % save_file)
 
 # End Pipeline Functions------------------------------------------------------------------------------------------------------------------------------------------------
 
