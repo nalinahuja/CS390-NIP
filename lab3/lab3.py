@@ -15,14 +15,14 @@ SEED_VALUE = 1618
 MEDIA_DIR = "./media"
 
 # Content Image File Path
-CONTENT_IMG_PATH = os.path.join(MEDIA_DIR, "content/flowers.jpg")
+CONTENT_IMG_PATH = os.path.join(MEDIA_DIR, "content/john.jpg")
 
 # Content Image Dimensions
 CONTENT_IMG_W = 500
 CONTENT_IMG_H = 500
 
 # Style Image File Path
-STYLE_IMG_PATH = os.path.join(MEDIA_DIR, "style/red.jpg")
+STYLE_IMG_PATH = os.path.join(MEDIA_DIR, "style/stars.jpg")
 
 # Style Image Dimensions
 STYLE_IMG_W = 500
@@ -73,7 +73,7 @@ def deprocess_image(img):
     # Reshape Deprocessed Image
     img = img.reshape((STYLE_IMG_H, STYLE_IMG_W, 3))
 
-    # Process Zero-Center By Mean Pixel
+    # Reverse VGG19 Transformation
     img[:, :, 0] += 103.939
     img[:, :, 1] += 116.779
     img[:, :, 2] += 123.680
